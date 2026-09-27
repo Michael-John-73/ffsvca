@@ -1,0 +1,237 @@
+{
+  "alpha_policy": {
+    "primary": 0.05,
+    "secondary": [
+      0.1,
+      0.01
+    ]
+  },
+  "severity": {
+    "jpeg": {
+      "primary_quality": 50,
+      "sweep_quality": [
+        30,
+        50,
+        70,
+        90
+      ]
+    },
+    "rotation": {
+      "degrees": 10
+    },
+    "cropping": {
+      "ratio": 0.8
+    },
+    "blurring": {
+      "kernel": 5,
+      "sigma": 1.0
+    },
+    "noise": {
+      "primary_sigma": 0.03,
+      "sweep_sigma": [
+        0.01,
+        0.03,
+        0.05,
+        0.08
+      ]
+    }
+  },
+  "attacks": [
+    {
+      "id": "none",
+      "family": "ID-single",
+      "stages": []
+    },
+    {
+      "id": "jpeg_q50",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "jpeg",
+          "quality": 50
+        }
+      ]
+    },
+    {
+      "id": "jpeg_q30",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "jpeg",
+          "quality": 30
+        }
+      ]
+    },
+    {
+      "id": "jpeg_q70",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "jpeg",
+          "quality": 70
+        }
+      ]
+    },
+    {
+      "id": "jpeg_q90",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "jpeg",
+          "quality": 90
+        }
+      ]
+    },
+    {
+      "id": "rotation",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "rotation",
+          "degrees": 10
+        }
+      ]
+    },
+    {
+      "id": "cropping",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "cropping",
+          "ratio": 0.8
+        }
+      ]
+    },
+    {
+      "id": "blurring",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "blurring",
+          "kernel": 5,
+          "sigma": 1.0
+        }
+      ]
+    },
+    {
+      "id": "noise_s003",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "noise",
+          "sigma": 0.03
+        }
+      ]
+    },
+    {
+      "id": "noise_s001",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "noise",
+          "sigma": 0.01
+        }
+      ]
+    },
+    {
+      "id": "noise_s005",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "noise",
+          "sigma": 0.05
+        }
+      ]
+    },
+    {
+      "id": "noise_s008",
+      "family": "ID-single",
+      "stages": [
+        {
+          "op": "noise",
+          "sigma": 0.08
+        }
+      ]
+    },
+    {
+      "id": "jpeg+cropping",
+      "family": "same-family composite",
+      "stages": [
+        {
+          "op": "jpeg",
+          "quality": 50
+        },
+        {
+          "op": "cropping",
+          "ratio": 0.8
+        }
+      ]
+    },
+    {
+      "id": "cropping+jpeg",
+      "family": "same-family composite",
+      "stages": [
+        {
+          "op": "cropping",
+          "ratio": 0.8
+        },
+        {
+          "op": "jpeg",
+          "quality": 50
+        }
+      ]
+    },
+    {
+      "id": "blurring+noise",
+      "family": "same-family composite",
+      "stages": [
+        {
+          "op": "blurring",
+          "kernel": 5,
+          "sigma": 1.0
+        },
+        {
+          "op": "noise",
+          "sigma": 0.03
+        }
+      ]
+    },
+    {
+      "id": "rotation+cropping+jpeg",
+      "family": "cross-family composite",
+      "stages": [
+        {
+          "op": "rotation",
+          "degrees": 10
+        },
+        {
+          "op": "cropping",
+          "ratio": 0.8
+        },
+        {
+          "op": "jpeg",
+          "quality": 50
+        }
+      ]
+    },
+    {
+      "id": "noise+blurring+jpeg",
+      "family": "cross-family composite",
+      "stages": [
+        {
+          "op": "noise",
+          "sigma": 0.03
+        },
+        {
+          "op": "blurring",
+          "kernel": 5,
+          "sigma": 1.0
+        },
+        {
+          "op": "jpeg",
+          "quality": 50
+        }
+      ]
+    }
+  ]
+}

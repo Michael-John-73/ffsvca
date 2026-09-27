@@ -1,0 +1,10 @@
+alpha,method,n_attacks,n_safe,n_unsafe,safe_families,unsafe_families
+0.01,M1,102,102,0,ID-single;cross-family composite;same-family composite,
+0.01,M2,102,102,0,ID-single;cross-family composite;same-family composite,
+0.01,M3,102,76,26,cross-family composite,ID-single;same-family composite
+0.05,M1,102,102,0,ID-single;cross-family composite;same-family composite,
+0.05,M2,102,102,0,ID-single;cross-family composite;same-family composite,
+0.05,M3,102,80,22,cross-family composite,ID-single;same-family composite
+0.1,M1,102,102,0,ID-single;cross-family composite;same-family composite,
+0.1,M2,102,102,0,ID-single;cross-family composite;same-family composite,
+0.1,M3,102,77,25,cross-family composite,ID-single;same-family composite

@@ -1,0 +1,24 @@
+== A. Partition identity across seeds
+cal prompt sets identical across seeds: True; |cal|=500
+
+== B. Reproduced M3 FPR on none (stored split_seed=42)
+seed 0: n=500 m=500 FPR@.01=0.0120 @.05=0.0380 @.10=0.1060
+seed 1: n=500 m=500 FPR@.01=0.0020 @.05=0.0380 @.10=0.0880
+seed 2: n=500 m=500 FPR@.01=0.0000 @.05=0.0420 @.10=0.0880
+seed 3: n=500 m=500 FPR@.01=0.0140 @.05=0.0320 @.10=0.0920
+seed 4: n=500 m=500 FPR@.01=0.0020 @.05=0.0300 @.10=0.0640
+min unique scores per seed (ties check): 999 of 1000
+
+== C. Expected value under exchangeability (independent seeds)
+alpha=0.01: k=496 E[FPR]=0.00998 sd/seed=0.00628 | obs mean=0.00600 obs sd=0.00648 | z(mean)=-1.42 | sd ratio obs/theory=1.03
+alpha=0.05: k=476 E[FPR]=0.04990 sd/seed=0.01375 | obs mean=0.03600 obs sd=0.00490 | z(mean)=-2.26 | sd ratio obs/theory=0.36
+alpha=0.1: k=451 E[FPR]=0.09980 sd/seed=0.01893 | obs mean=0.08760 obs sd=0.01513 | z(mean)=-1.44 | sd ratio obs/theory=0.80
+
+== D. Re-split distribution (2000 shared random partitions)
+alpha=0.01: re-split mean of 5-seed mean=0.00996 (2.5-97.5%: 0.00440-0.01720) | per-seed re-split sd=0.00628 | split_seed=42 value=0.00600 at percentile 11.0%
+alpha=0.05: re-split mean of 5-seed mean=0.04984 (2.5-97.5%: 0.03639-0.06680) | per-seed re-split sd=0.01373 | split_seed=42 value=0.03600 at percentile 2.4%
+alpha=0.1: re-split mean of 5-seed mean=0.09978 (2.5-97.5%: 0.07760-0.12600) | per-seed re-split sd=0.01920 | split_seed=42 value=0.08760 at percentile 15.2%
+
+== E. Cross-seed dependence of non-watermarked none scores (same prompt)
+Pearson r across seed pairs: mean=0.605 min=0.584 max=0.625
+ICC(1) of prompt effect: 0.605

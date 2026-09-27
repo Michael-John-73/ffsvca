@@ -1,0 +1,66 @@
+seeds=[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)] conditions=17 n_cal=500 m_test=500
+
+== S2: KS distance (non-watermarked none vs condition), seed mean over 5 seeds
+condition                  KS_mean  KS_min  KS_max  |dFPR|@M3,a=.05 (mean)
+blurring                   0.079    0.075   0.084   0.0064
+blurring+noise             0.052    0.045   0.061   0.0316
+cropping                   0.029    0.021   0.040   0.0048
+cropping+jpeg              0.067    0.060   0.076   0.0124
+jpeg+cropping              0.099    0.089   0.106   0.0212
+jpeg_q30                   0.097    0.086   0.104   0.0072
+jpeg_q50                   0.075    0.069   0.079   0.0204
+jpeg_q70                   0.041    0.034   0.046   0.0092
+jpeg_q90                   0.015    0.014   0.019   0.0024
+noise+blurring+jpeg        0.118    0.104   0.139   0.0252
+noise_s001                 0.026    0.020   0.032   0.0040
+noise_s003                 0.038    0.034   0.042   0.0172
+noise_s005                 0.060    0.055   0.066   0.0272
+noise_s008                 0.083    0.075   0.088   0.0248
+none                       0.000    0.000   0.000   0.0000
+rotation                   0.260    0.251   0.275   0.0340
+rotation+cropping+jpeg     0.194    0.180   0.209   0.0272
+
+== S3: multiplicity (one-sided exact binomial, H0: r_a(c) <= alpha, conditional on C)
+alpha=0.01: observed exceedances=21/85; unadjusted p<=.05: 8; Holm: 1; BH(q=.05): 1
+   BH-significant conditions (any seed): blurring+noise
+   pooled over seeds (N=2500, seeds share one partition -> approximate): Holm-significant: -
+alpha=0.05: observed exceedances=18/85; unadjusted p<=.05: 7; Holm: 0; BH(q=.05): 0
+   BH-significant conditions (any seed): -
+   pooled over seeds (N=2500, seeds share one partition -> approximate): Holm-significant: blurring+noise (X=169, FPR=0.0676, p=6.87e-05), noise_s005 (X=158, FPR=0.0632, p=1.96e-03)
+alpha=0.1: observed exceedances=21/85; unadjusted p<=.05: 13; Holm: 2; BH(q=.05): 7
+   BH-significant conditions (any seed): blurring+noise, noise_s005, noise_s008
+   pooled over seeds (N=2500, seeds share one partition -> approximate): Holm-significant: blurring+noise (X=331, FPR=0.1324, p=1.31e-07), noise_s005 (X=318, FPR=0.1272, p=6.91e-06), noise_s008 (X=325, FPR=0.1300, p=8.76e-07)
+
+== S6: power to detect true FPR above the budget (one-sided exact binomial, level 0.05)
+alpha=0.01 m=500 (reject if count >= 10; size=0.031): FPR=0.012: power=0.08, P(emp>a)=0.56; FPR=0.014: power=0.17, P(emp>a)=0.70; FPR=0.016: power=0.28, P(emp>a)=0.81; FPR=0.020: power=0.54, P(emp>a)=0.93
+alpha=0.01 m=2500 (reject if count >= 34; size=0.049): FPR=0.012: power=0.25, P(emp>a)=0.79; FPR=0.014: power=0.59, P(emp>a)=0.95; FPR=0.016: power=0.85, P(emp>a)=0.99; FPR=0.020: power=0.99, P(emp>a)=1.00
+alpha=0.05 m=500 (reject if count >= 34; size=0.045): FPR=0.060: power=0.25, P(emp>a)=0.80; FPR=0.070: power=0.59, P(emp>a)=0.96; FPR=0.080: power=0.86, P(emp>a)=0.99; FPR=0.100: power=1.00, P(emp>a)=1.00
+alpha=0.05 m=2500 (reject if count >= 144; size=0.047): FPR=0.060: power=0.70, P(emp>a)=0.98; FPR=0.070: power=0.99, P(emp>a)=1.00; FPR=0.080: power=1.00, P(emp>a)=1.00; FPR=0.100: power=1.00, P(emp>a)=1.00
+alpha=0.1 m=500 (reject if count >= 62; size=0.046): FPR=0.120: power=0.41, P(emp>a)=0.91; FPR=0.140: power=0.86, P(emp>a)=1.00; FPR=0.160: power=0.99, P(emp>a)=1.00; FPR=0.200: power=1.00, P(emp>a)=1.00
+alpha=0.1 m=2500 (reject if count >= 276; size=0.046): FPR=0.120: power=0.94, P(emp>a)=1.00; FPR=0.140: power=1.00, P(emp>a)=1.00; FPR=0.160: power=1.00, P(emp>a)=1.00; FPR=0.200: power=1.00, P(emp>a)=1.00
+
+== M4/M5: alternative same-objective rules (delta=0.1 for PAC)
+alpha=0.01 M3         : within-budget 64/85; conditions seed-mean>a: 5; mean TPR over conditions=0.7252; none FPR/TPR=0.0060/0.9968
+      noise_s005: 0.0132/0.9888; blurring+noise: 0.0156/0.9840; jpeg_q50: 0.0040/0.9732; cropping: 0.0064/0.3732; rotation: 0.0008/0.0044; jpeg+cropping: 0.0028/0.0960
+alpha=0.01 M4-union   : within-budget 56/85; conditions seed-mean>a: 5; mean TPR over conditions=0.7355; none FPR/TPR=0.0084/0.9972
+      noise_s005: 0.0176/0.9932; blurring+noise: 0.0188/0.9900; jpeg_q50: 0.0040/0.9796; cropping: 0.0084/0.4180; rotation: 0.0008/0.0060; jpeg+cropping: 0.0036/0.1136
+alpha=0.01 M5a-PAC    : within-budget 85/85; conditions seed-mean>a: 0; mean TPR over conditions=0.6797; none FPR/TPR=0.0024/0.9884
+      noise_s005: 0.0024/0.9580; blurring+noise: 0.0020/0.9464; jpeg_q50: 0.0020/0.9284; cropping: 0.0012/0.1824; rotation: 0.0004/0.0008; jpeg+cropping: 0.0012/0.0292
+alpha=0.01 M5b-oracle : within-budget 57/85; conditions seed-mean>a: 2; mean TPR over conditions=0.7554; none FPR/TPR=0.0060/0.9968
+      noise_s005: 0.0076/0.9832; blurring+noise: 0.0052/0.9756; jpeg_q50: 0.0088/0.9880; cropping: 0.0080/0.4404; rotation: 0.0056/0.0872; jpeg+cropping: 0.0100/0.2888
+alpha=0.05 M3         : within-budget 67/85; conditions seed-mean>a: 4; mean TPR over conditions=0.7891; none FPR/TPR=0.0360/0.9992
+      noise_s005: 0.0632/0.9984; blurring+noise: 0.0676/0.9976; jpeg_q50: 0.0156/0.9956; cropping: 0.0336/0.6700; rotation: 0.0020/0.0356; jpeg+cropping: 0.0148/0.3228
+alpha=0.05 M4-union   : within-budget 50/85; conditions seed-mean>a: 7; mean TPR over conditions=0.8073; none FPR/TPR=0.0540/0.9992
+      noise_s005: 0.0856/0.9988; blurring+noise: 0.0900/0.9992; jpeg_q50: 0.0276/0.9980; cropping: 0.0460/0.7368; rotation: 0.0040/0.0576; jpeg+cropping: 0.0220/0.4168
+alpha=0.05 M5a-PAC    : within-budget 77/85; conditions seed-mean>a: 2; mean TPR over conditions=0.7784; none FPR/TPR=0.0308/0.9988
+      noise_s005: 0.0504/0.9984; blurring+noise: 0.0568/0.9964; jpeg_q50: 0.0120/0.9940; cropping: 0.0272/0.6324; rotation: 0.0012/0.0252; jpeg+cropping: 0.0108/0.2676
+alpha=0.05 M5b-oracle : within-budget 66/85; conditions seed-mean>a: 0; mean TPR over conditions=0.8504; none FPR/TPR=0.0360/0.9992
+      noise_s005: 0.0448/0.9980; blurring+noise: 0.0464/0.9956; jpeg_q50: 0.0424/0.9988; cropping: 0.0428/0.7328; rotation: 0.0396/0.3420; jpeg+cropping: 0.0480/0.6184
+alpha=0.1 M3         : within-budget 64/85; conditions seed-mean>a: 4; mean TPR over conditions=0.8386; none FPR/TPR=0.0876/0.9996
+      noise_s005: 0.1272/1.0000; blurring+noise: 0.1324/1.0000; jpeg_q50: 0.0552/0.9996; cropping: 0.0804/0.8224; rotation: 0.0080/0.1224; jpeg+cropping: 0.0404/0.5772
+alpha=0.1 M4-union   : within-budget 52/85; conditions seed-mean>a: 7; mean TPR over conditions=0.8535; none FPR/TPR=0.1076/0.9996
+      noise_s005: 0.1492/1.0000; blurring+noise: 0.1532/1.0000; jpeg_q50: 0.0732/0.9996; cropping: 0.1000/0.8572; rotation: 0.0128/0.1708; jpeg+cropping: 0.0564/0.6472
+alpha=0.1 M5a-PAC    : within-budget 72/85; conditions seed-mean>a: 3; mean TPR over conditions=0.8214; none FPR/TPR=0.0684/0.9996
+      noise_s005: 0.1044/0.9996; blurring+noise: 0.1060/0.9992; jpeg_q50: 0.0388/0.9992; cropping: 0.0624/0.7800; rotation: 0.0048/0.0840; jpeg+cropping: 0.0292/0.4892
+alpha=0.1 M5b-oracle : within-budget 66/85; conditions seed-mean>a: 0; mean TPR over conditions=0.8983; none FPR/TPR=0.0876/0.9996
+      noise_s005: 0.0960/0.9988; blurring+noise: 0.0964/0.9992; jpeg_q50: 0.0956/1.0000; cropping: 0.0928/0.8440; rotation: 0.0896/0.5380; jpeg+cropping: 0.0968/0.7684

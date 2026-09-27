@@ -1,0 +1,2 @@
+method,alpha,attack_id,n_eval,n_pos,empirical_fpr,fpr_ci_lo,fpr_ci_hi,calibration_error,delta_fpr,fpr_violation
+M3,0.05,none,1000,8,0.008,0.0040591470038196,0.0157065212051886,0.042,-0.042,0
