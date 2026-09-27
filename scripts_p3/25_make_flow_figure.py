@@ -1,12 +1,12 @@
 """
 scripts_p3/25_make_flow_figure.py  (local)
 
-Pipeline figure with real SD2.1 artefacts: one test-split prompt (the first one, seed 0),
+We draw our pipeline figure with real SD2.1 artefacts: one test-split prompt (the first one, seed 0),
 its non-watermarked and ROBIN images, the ROBIN Fourier key, four evaluation conditions
-applied with the same attack code as the scoring run, the stored detection scores of
+applied with the same attack code as our scoring run, the stored detection scores of
 exactly these images, the calibration threshold, and the resulting FPR/TPR map.
 
-Writes outputs_p3/figures/fig0_flow.{pdf,png} and prints every number drawn.
+We write outputs_p3/figures/fig0_flow.{pdf,png} and print every number drawn.
 """
 from __future__ import annotations
 
@@ -35,14 +35,14 @@ SHOW = ["none", "jpeg_q50", "noise_s005", "rotation"]
 
 
 def set_random_seed(seed: int) -> None:
-    """robin_official/optim_utils.set_random_seed on CPU."""
+    """We reproduce robin_official/optim_utils.set_random_seed on CPU."""
     torch.manual_seed(seed)
     np.random.seed(seed + 3)
     random.seed(seed + 5)
 
 
 def apply_stage(img: Image.Image, st: dict, rng_seed: int) -> Image.Image:
-    """Copy of _attack_scoring_common.apply_stage."""
+    """We copy _attack_scoring_common.apply_stage here."""
     op = st["op"]
     if op == "jpeg":
         buf = io.BytesIO(); img.save(buf, format="JPEG", quality=int(st["quality"])); buf.seek(0)
@@ -68,7 +68,7 @@ def attack(img, stages, rng_seed):
 
 
 def ring_mask(size=64, r_max=15, r_min=5):
-    """robin_official circle_mask (annulus r_min < d <= r_max)."""
+    """We reproduce robin_official circle_mask (annulus r_min < d <= r_max)."""
     x0 = y0 = size // 2
     y, x = np.ogrid[:size, :size]; y = y[::-1]
     d2 = (x - x0) ** 2 + (y - y0) ** 2

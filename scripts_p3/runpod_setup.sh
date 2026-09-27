@@ -1,25 +1,25 @@
 #!/bin/bash
 # scripts_p3/runpod_setup.sh
 #
-# Run this ONCE on a fresh RunPod pod (after copying the repo over) to prepare
-# Phase 2 scoring on an external CUDA GPU (see 03_score_attacks_cuda.py).
+# We run this ONCE on a fresh RunPod pod (after copying the repo over) to prepare
+# our scoring on an external CUDA GPU (see 03_score_attacks_cuda.py).
 #
-# Pod selection (do this in the RunPod web UI before connecting):
+# Pod selection (we do this in the RunPod web UI before connecting):
 #   - Template: any "RunPod PyTorch" base image with CUDA 12.1 (e.g.
-#     "RunPod Pytorch 2.1" / "cuda12.1"-tagged template). Do NOT pick a
-#     CUDA<12.0 template; this script installs its own torch/diffusers on
+#     "RunPod Pytorch 2.1" / "cuda12.1"-tagged template). We do NOT pick a
+#     CUDA<12.0 template; we install our own torch/diffusers here on
 #     top regardless, but the pod's driver must support >=12.1.
 #   - GPU: RTX 4090 (widely available on RunPod, well-supported). RTX 5090
-#     may not yet be listed as a RunPod SKU — check availability first.
-#   - Disk: >= 20GB container disk (10,000 source images ~1-2GB + SD1.5
+#     may not yet be listed as a RunPod SKU — we check availability first.
+#   - Disk: >= 20GB container disk (10,000 source images ~1-2GB + SD 2.1-base
 #     weights ~5GB + venv ~6GB).
 #
-# Data transfer (repo -> pod, and results pod -> repo) — use runpodctl:
+# Data transfer (repo -> pod, and results pod -> repo) — we use runpodctl:
 #   Local:  runpodctl send outputs_p3/clean outputs_p3/watermarked \
 #               outputs_p3/manifests robin_official scripts_p3
 #           (prints a one-time receive code)
 #   Pod:    runpodctl receive <code>
-#   ... after Phase 2 finishes on the pod ...
+#   ... after our scoring finishes on the pod ...
 #   Pod:    runpodctl send outputs_p3/scores
 #   Local:  runpodctl receive <code>
 set -euo pipefail

@@ -1,6 +1,6 @@
 #!/bin/bash
-# scripts_p3/run_treering_b2.sh  — Tree-Ring second detector, plan B2 (seed 0)
-# Run from /workspace/PAPER3 after scripts_p3/runpod_setup.sh.
+# scripts_p3/run_treering_b2.sh  — our second detector, the Tree-Ring comparator (E10) (seed 0)
+# We run this from /workspace/PAPER3 after scripts_p3/runpod_setup.sh.
 #   bash scripts_p3/run_treering_b2.sh pilot   # 20 prompts: generate, score, check
 #   bash scripts_p3/run_treering_b2.sh full    # 1000 prompts (resumes; pilot rows kept)
 set -euo pipefail

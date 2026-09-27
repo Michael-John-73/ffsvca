@@ -1,15 +1,15 @@
 """
 scripts_p3/04_parse_score_dump.py
 
-Phase 2.4 / 3.5: Parse score JSON dumps produced by 03_score_attacks.py
-(OpenVINO) / 03_score_attacks_cuda.py (CUDA) into the canonical scores_raw.csv
-used by the rest of the pipeline.
+We parse the score JSON dumps that 03_score_attacks.py (OpenVINO) /
+03_score_attacks_cuda.py (CUDA) produce into the canonical scores_raw.csv
+that the rest of our pipeline uses.
 
-Score convention (paper-canonical):
+Our score convention (as in the paper):
     z = -d   (z = score_z, d = ROBIN inversion distance)
-Higher z => more confident watermark presence.
+We read higher z as more confident watermark presence.
 
-Input layout (per attack run, configurable via --scores_dir):
+We expect this input layout (per attack run, configurable via --scores_dir):
     <scores_dir>/<attack_id>/scores.json
         {
           "attack_id": "jpeg+cropping",
@@ -19,15 +19,15 @@ Input layout (per attack run, configurable via --scores_dir):
             ...
           ]
         }
-    label = 0 means CLEAN, label = 1 means WATERMARKED.
+    We use label = 0 for CLEAN and label = 1 for WATERMARKED.
 
-Output:
+We write:
     outputs_p3/scores/scores_raw.csv
     columns: prompt_id, seed, attack_id, family, label, distance, score_z
 
-`family` is read from outputs_p3/manifests/attack_manifest.json (single source
-of truth, kept in sync with 02_build_attack_manifest.py) rather than a
-duplicated lookup table here.
+We read `family` from outputs_p3/manifests/attack_manifest.json (our single
+source of truth, kept in sync with 02_build_attack_manifest.py) rather than
+duplicating a lookup table here.
 """
 from __future__ import annotations
 

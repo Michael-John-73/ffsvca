@@ -1,17 +1,17 @@
 """
 scripts_p3/10_eval_e4_calibration_size.py
 
-E4: Calibration sample-size sensitivity.
+E4: We test calibration sample-size sensitivity.
 
-paper3.md §6.5: calibration/test pools are per-seed and must never be pooled
+We keep calibration/test pools per seed and never pool them
 across gen_seed (pool_max would otherwise silently become n_cal x 5 seeds).
-For each gen_seed, sweep calibration sizes in {30, 50, 100, 200, 500} (capped
+For each gen_seed, we sweep calibration sizes in {30, 50, 100, 200, 500} (capped
 at that seed's own cal_clean@none pool, i.e. 500), draw `--n_repeats` random
 subsamples, compute the M3 quantile threshold, and evaluate against THAT
-seed's test_clean. Per-seed rows are written, plus a cross-seed mean/std
-aggregate row (gen_seed = "all") per §6.3.
+seed's test_clean. We write per-seed rows, plus a cross-seed mean/std
+aggregate row (gen_seed = "all").
 
-Output: outputs_p3/metrics/e4_calibration_size.csv
+Our output: outputs_p3/metrics/e4_calibration_size.csv
 """
 from __future__ import annotations
 

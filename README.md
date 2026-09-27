@@ -1,43 +1,42 @@
 # FFSVCA — Fixed-FPR Security Verification of Inversion-Based Diffusion Watermark Detectors
 
-Code, evaluation manifest, result tables and figures for the paper
+We provide the code, evaluation manifest, result tables and figures for the paper
 
 > **A Fixed-FPR Security Verification Protocol and Operating-Range Map for Inversion-Based Diffusion Watermark Detectors under Composite Post-Processing Attacks**
-> Hyeong Gyun Yun, Jung Min Park, Hye Young Kim (Hongik University)
 
-The repository does **not** propose a new watermark, detector or attack. It re-defines the decision
-threshold of the released ROBIN detector ([ROBIN, NeurIPS 2024](https://arxiv.org/abs/2411.03862)) as a
-split-conformal quantile of non-watermarked calibration scores, holds that threshold fixed, and audits the
-empirical false-positive rate (FPR) and true-positive rate (TPR) over 17 evaluation conditions, five
-generation seeds, MS-COCO photographs, a diffusion-regeneration stress test and two comparator detectors
-(DWT-DCT-SVD and Tree-Ring). The product is an **operating-range map**: where the empirical FPR stayed within
-the budget α, where it did not, and where detection sensitivity was lost. It is an empirical map over the
-evaluated conditions, not a general robustness claim.
+We do **not** propose a new watermark, detector or attack. We re-define the decision threshold of the
+released ROBIN detector ([ROBIN, NeurIPS 2024](https://arxiv.org/abs/2411.03862)) as a split-conformal
+quantile of non-watermarked calibration scores, hold that threshold fixed, and audit the empirical
+false-positive rate (FPR) and true-positive rate (TPR) over 17 evaluation conditions, five generation seeds,
+MS-COCO photographs, a diffusion-regeneration stress test and two comparator detectors (DWT-DCT-SVD and
+Tree-Ring). Our product is an **operating-range map**: where the empirical FPR stayed within the budget α,
+where it did not, and where detection sensitivity was lost. We report it as an empirical map over the
+evaluated conditions, not as a general robustness claim.
 
 ![Verification pipeline](outputs_p3/figures/fig0_flow.png)
 
-*Figure 1 — Verification pipeline with the actual SD 2.1-base artefacts of test prompt 1 (generation seed 0):
-(A) paired non-watermarked / ROBIN images and the Fourier key, (B) four of the 17 conditions with the stored
-score z and the decision at τ₀.₀₅, (C) calibration histogram, seed-0 test distributions and five-seed mean FPR
+*Figure 1 — We trace one test prompt (prompt 1, generation seed 0) through the protocol: (A) the paired
+non-watermarked / ROBIN images and the Fourier key, (B) four of the 17 conditions with the stored score z and
+our decision at τ₀.₀₅, (C) the calibration histogram, the seed-0 test distributions and the five-seed mean FPR
 per condition.*
 
 ---
 
 ## 1. Protocol
 
-Score: `z(x) = −d(x)`, where `d(x)` is ROBIN's inversion distance (mean |F − w| over the ring mask,
-channel 3, 5 < r ≤ 15, of the latent recovered at the injection step 35 of 50).
+We score an image as `z(x) = −d(x)`, where `d(x)` is ROBIN's inversion distance (mean |F − w| over the ring
+mask, channel 3, 5 < r ≤ 15, of the latent we recover at the injection step 35 of 50).
 
-| Rule | Definition (data used) | α-dependent |
+| Rule | Definition (data we use) | α-dependent |
 |---|---|---|
 | M1 – Midpoint baseline | τ = ½(mean non-wm + mean wm calibration score) on `none` | no |
 | M2 – ROC-selected | threshold maximizing Youden's J on the calibration pool of `none` | no |
 | **M3 – Split-conformal** | τ_α = z₍ₖ₎, k = ⌈(n+1)(1−α)⌉, non-watermarked calibration scores under `none` only; decision `1[z > τ_α]` | yes |
 
-All thresholds use the calibration split only (500 of 1,000 prompts, `split_seed=42`, shared by all seeds) and
-are computed per generation seed. Under exchangeability, M3 gives the marginal guarantee
+We compute every threshold on the calibration split only (500 of 1,000 prompts, `split_seed=42`, shared by
+all seeds) and separately for each generation seed. Under exchangeability, M3 gives the marginal guarantee
 P[Z_new > τ_α] ≤ α for unmodified non-watermarked images; it gives **no** guarantee under post-processing,
-which is what the protocol audits. α = 0.05 is primary; 0.01 and 0.10 are secondary.
+which is exactly what we audit. We use α = 0.05 as the primary budget and 0.01 and 0.10 as secondary budgets.
 
 ## 2. Evaluation manifest (17 conditions)
 
@@ -55,16 +54,17 @@ which is what the protocol audits. α = 0.05 is primary; 0.01 and 0.10 are secon
 | three-stage | `rotation+cropping+jpeg` | rotate → crop → jpeg(50) |
 | three-stage | `noise+blurring+jpeg` | noise(.03) → blur → jpeg(50) |
 
-Machine-readable: [`outputs_p3/manifests/attack_manifest.json`](outputs_p3/manifests/attack_manifest.json).
+We keep the machine-readable manifest in
+[`outputs_p3/manifests/attack_manifest.json`](outputs_p3/manifests/attack_manifest.json).
 
 ## 3. Setup
 
-| Item | Value |
+| Item | What we used |
 |---|---|
 | Backbone | Stable Diffusion 2.1-base (`sd2-community/stable-diffusion-2-1-base`, fp16), DPM-Solver++ multistep, guidance 7.5, 50 steps |
 | Watermark | ROBIN released checkpoint `optimized_r5_15_step10.pt` (channel 3, ring, w_low 5, w_up 15), injection at step 35 |
 | Prompts | 1,000 synthetic template prompts ([`outputs_p3/prompts/prompt_list.csv`](outputs_p3/prompts/prompt_list.csv)), split 500/500 |
-| Seeds | generation seeds {0,1,2,3,4} (E1, E2, E4, E5); seed 0 for E7–E10 |
+| Seeds | generation seeds {0,1,2,3,4} for E1, E2, E4, E5; seed 0 for E7–E10 |
 | Test pool | 500 non-watermarked + 500 watermarked images per condition per seed |
 | Compute | NVIDIA RTX 4090 (24 GB), CUDA 12.1, torch 2.3.1, batch size 34 |
 
@@ -72,14 +72,27 @@ Machine-readable: [`outputs_p3/manifests/attack_manifest.json`](outputs_p3/manif
 pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
 ```
 
-The ROBIN code (`robin_official/`, with `optim_utils.py` and `inverse_stable_diffusion.py`) and its released
-checkpoint are required but not redistributed here. On RunPod, `scripts_p3/runpod_setup.sh` installs the
-pinned stack.
+We need the ROBIN code (`robin_official/`, with `optim_utils.py` and `inverse_stable_diffusion.py`) and its
+released checkpoint, which we do not redistribute; our scripts expect `robin_official/` next to this
+repository. On RunPod we install the pinned stack with `scripts_p3/runpod_setup.sh`.
 
-## 4. Repository layout and pipeline
+## 4. Images: how we generated them and what we used
+
+We do not upload the image sets; we regenerate them with the scripts below.
+
+| Image set | How we generated it | What we used |
+|---|---|---|
+| Non-watermarked + ROBIN watermarked pairs (5 seeds × 1,000 prompts = 10,000 images) | `gen_pairs_cuda.py`: for prompt i and generation seed s we set the random seed to i + s and draw one initial latent; from that latent we generate the non-watermarked image and the ROBIN image, into which ROBIN writes its Fourier ring key at step 35 of 50 | SD 2.1-base (fp16), DPM-Solver++, guidance 7.5, 50 steps, ROBIN `optimized_r5_15_step10.pt`, the 1,000 prompts of `prompt_list.csv`, RTX 4090 |
+| Tree-Ring watermarked images (seed 0, 1,000 images) | `gen_treering_cuda.py`: we reuse the same pipeline, prompts and per-image initial latents as the seed-0 non-watermarked images and write the Tree-Ring key into the initial latent x_T | Tree-Ring configuration of the official command (channel 3, ring, radius 10, key seed 999999, complex injection) |
+| Attacked images (17 conditions) | `03_score_attacks_cuda.py` applies every condition of the manifest on the fly with a per-image seed, so that both images of a pair receive the same crop and noise draw | `attack_manifest.json` |
+| MS-COCO photographs (E7) | we use 1,000 images of COCO val2017, the first 1,000 after a shuffle with seed 0 (`score_coco_real.py`) | MS-COCO val2017 (not redistributed) |
+| img2img regenerations (E8) | `score_adaptive_regen.py`: we regenerate 200 watermarked and 200 non-watermarked images with SD 2.1-base img2img at strengths 0.2, 0.3, 0.5 | SD 2.1-base img2img |
+| DWT-DCT-SVD images (E9) | `score_dwtdctsvd.py`: we embed a 64-bit key post hoc into the seed-0 non-watermarked images | `invisible-watermark` library, `dwtDctSvd` method |
+
+## 5. Repository layout and pipeline
 
 ```
-scripts_p3/                 experiment scripts (run from the repository root)
+scripts_p3/                 our experiment scripts (run from the repository root)
 outputs_p3/manifests/       17-condition attack manifest
 outputs_p3/prompts/         prompt list
 outputs_p3/metrics/         per-experiment metric CSV/TXT (E1–E8, re-split and reviewer analyses)
@@ -107,11 +120,11 @@ outputs_p3/figures/         paper figures (PDF + PNG)
 | Re-split / reviewer analyses | `19_s1_split_check.py`, `20_s1_e2_resplit.py`, `21_reviewer_local_bundle.py` | `metrics/s1_*`, `metrics/reviewer_local_bundle*` |
 | Tables / figures / checks | `15_make_paper_tables.py`, `16_make_paper_figures.py`, `25_make_flow_figure.py`, `17_run_quality_checks.py` | `tables/`, `figures/` |
 
-Not included (size): generated images, attacked images, raw score dumps (`scores_raw.csv`) and
-`final_summary.csv` (74 MB). They are regenerable from the released prompts, manifest, seeds and scripts.
-(The experiment identifier E3 is not used.)
+We do not include the image sets (Section 4), the raw score dumps (`scores_raw.csv`) or `final_summary.csv`
+(74 MB); we regenerate them from the prompts, manifest, seeds and scripts. We do not use the experiment
+identifier E3.
 
-## 5. Results (α = 0.05 unless stated)
+## 6. Results (α = 0.05 unless stated)
 
 ### E1 — Threshold rules on `none` (mean ± across-seed std, 5 seeds)
 
@@ -123,8 +136,8 @@ Not included (size): generated images, attacked images, raw score dumps (`scores
 | M3 | 0.05 | 0.0360 ± 0.0049 | 0.9992 ± 0.0018 |
 | M3 | 0.10 | 0.0876 ± 0.0151 | 0.9996 ± 0.0009 |
 
-Seed-averaged AUC on `none` is 0.9998. Over 2,000 re-drawn prompt partitions the five-seed mean FPR averaged
-0.00996 / 0.0498 / 0.0998, matching the split-conformal value 1 − k/(n+1).
+We measured a seed-averaged AUC of 0.9998 on `none`. Over 2,000 re-drawn prompt partitions the five-seed mean
+FPR averaged 0.00996 / 0.0498 / 0.0998, matching the split-conformal value 1 − k/(n+1).
 
 ### E2/E6 — M3 by condition (mean over 5 seeds; `exc.` = seeds with FPR > α)
 
@@ -148,37 +161,39 @@ Seed-averaged AUC on `none` is 0.9998. Over 2,000 re-drawn prompt partitions the
 | three-stage | rotation+cropping+jpeg | 0.0088 | 0.025 | 0 |
 | three-stage | noise+blurring+jpeg | 0.0108 | 0.968 | 0 |
 
-- 67 of 85 condition–seed observations were within budget; all 18 observed exceedances were under additive
-  noise at σ ≥ 0.03 or `blurring+noise`. These are point-estimate exceedances: 7 of the 18 have unadjusted
-  one-sided exact binomial p ≤ 0.05 and none survives Holm/BH adjustment; pooled over seeds (approximate) the
-  exceedance is Holm-significant for `blurring+noise` and `noise_s005`. Over 1,000 re-drawn partitions the
-  four noise-related exceedances recurred in 96.3–99.9 % of cases.
-- Rotation and cropping-containing processing reduced TPR while the observed FPR stayed low.
+- We found 67 of 85 condition–seed observations within budget; all 18 observed exceedances occurred under
+  additive noise at σ ≥ 0.03 or `blurring+noise`. We treat them as point-estimate exceedances: 7 of the 18
+  have an unadjusted one-sided exact binomial p ≤ 0.05 and none survives Holm/BH adjustment; pooled over seeds
+  (approximate), the exceedance is Holm-significant for `blurring+noise` and `noise_s005`. Over 1,000
+  re-drawn partitions the four noise-related exceedances recurred in 96.3–99.9 % of cases.
+- We observed that rotation and cropping-containing processing reduced TPR while the observed FPR stayed low.
 
 ![FPR per condition](outputs_p3/figures/fig1_fpr_per_attack_alpha0.png)
 
-*Figure 2 — Seed-averaged empirical FPR for M1, M2, M3 across the 17 conditions.*
+*Figure 2 — We plot the seed-averaged empirical FPR for M1, M2, M3 across the 17 conditions.*
 
 ![Severity sweep](outputs_p3/figures/fig4_severity_sweep_alpha0.png)
 
-*Figure 3 — Severity sweep (E6): FPR and TPR versus JPEG quality and noise σ (faint markers: per-seed values).*
+*Figure 3 — We plot FPR and TPR versus JPEG quality and noise σ in the severity sweep (E6; faint markers:
+per-seed values).*
 
 ![FPR vs TPR by group](outputs_p3/figures/fig2_fpr_tpr_by_family_alpha0.png)
 
-*Figure 4 — FPR and TPR by group (ID-single, three-stage, two-stage).*
+*Figure 4 — We plot FPR against TPR by group (ID-single, three-stage, two-stage).*
 
 ### E4 — Calibration-size sensitivity
 
-Mean FPR on the pooled 17-condition test set was 2.29 %, 2.69 %, 3.47 %, 3.37 % and 3.24 % at
+We measured a mean FPR on the pooled 17-condition test set of 2.29 %, 2.69 %, 3.47 %, 3.37 % and 3.24 % at
 n_cal = 30, 50, 100, 200, 500 (100 resamples per size and seed).
 
 ![Calibration size](outputs_p3/figures/fig3_calibration_size_alpha0.png)
 
-*Figure 5 — Calibration-size sensitivity of M3 per seed (error bars: std across resamples).*
+*Figure 5 — We show the calibration-size sensitivity of M3 per seed (error bars: std across resamples).*
 
 ### E5 — Failure conditions
 
-V_s (conditions with FPR > α per seed) = 0 for M1/M2 and 3.6 ± 0.5 of 17 for M3 (4, 3, 4, 3, 4 for seeds 0–4).
+We counted V_s (conditions with FPR > α per seed) = 0 for M1/M2 and 3.6 ± 0.5 of 17 for M3 (4, 3, 4, 3, 4
+for seeds 0–4).
 
 ### E7 — MS-COCO photographs (1,000 images, seed-0 thresholds)
 
@@ -190,7 +205,7 @@ V_s (conditions with FPR > α per seed) = 0 for M1/M2 and 3.6 ± 0.5 of 17 for M
 
 ![COCO FPR](outputs_p3/figures/fig5_coco_real_fpr_alpha0.png)
 
-*Figure 6 — Empirical FPR of M3 on MS-COCO at α = 0.05 with its Wilson interval.*
+*Figure 6 — We show the empirical FPR of M3 on MS-COCO at α = 0.05 with its Wilson interval.*
 
 ### E8 — img2img regeneration stress test (200 images per cell, seed 0)
 
@@ -202,22 +217,23 @@ V_s (conditions with FPR > α per seed) = 0 for M1/M2 and 3.6 ± 0.5 of 17 for M
 
 ![Regeneration](outputs_p3/figures/fig6_adaptive_regen_alpha0.png)
 
-*Figure 7 — TPR and FPR of M3 versus regeneration strength.*
+*Figure 7 — We plot TPR and FPR of M3 versus regeneration strength.*
 
 ![Score distributions](outputs_p3/figures/fig7_score_dist_none.png)
 
-*Figure 8 — Score distributions under `none`, pooled over five seeds.*
+*Figure 8 — We show the score distributions under `none`, pooled over five seeds.*
 
 ### E9 — DWT-DCT-SVD comparator (seed 0, own calibration pool)
 
-FPR / TPR: `none` 0.030 / 1.000, `jpeg_q50` 0.038 / 0.736, `cropping` 0.042 / 0.004 — FPR within budget
-under all three conditions.
+We measured FPR / TPR of 0.030 / 1.000 under `none`, 0.038 / 0.736 under `jpeg_q50` and 0.042 / 0.004 under
+`cropping`; the FPR stayed within the budget under all three conditions.
 
 ### E10 — Tree-Ring comparator (seed 0, same partition as ROBIN seed 0)
 
-Test-split AUC 0.9991, TPR 99.4 % on unmodified inputs. Selected rows (full table:
-[`outputs_p3/treering/metrics/treering_fpr.csv`](outputs_p3/treering/metrics/treering_fpr.csv)); KS is the
-empirical two-sample KS distance to `none`, P(exc.) the fraction of 1,000 re-drawn partitions with FPR > α.
+We measured a test-split AUC of 0.9991 and a TPR of 99.4 % on unmodified inputs. We list selected rows below
+(full table: [`outputs_p3/treering/metrics/treering_fpr.csv`](outputs_p3/treering/metrics/treering_fpr.csv));
+KS is the empirical two-sample KS distance to `none`, and P(exc.) is the fraction of 1,000 re-drawn
+partitions with FPR > α.
 
 | attack_id | Tree-Ring FPR (CI) | KS | P(exc.) | ROBIN FPR (CI) | KS | P(exc.) |
 |---|---|---|---|---|---|---|
@@ -228,11 +244,11 @@ empirical two-sample KS distance to `none`, P(exc.) the fraction of 1,000 re-dra
 | blurring+noise | 0.028 (0.017–0.046) | 0.127 | 0.02 | 0.066 (0.047–0.091) | 0.045 | 0.96 |
 | rotation | 0.024 (0.014–0.041) | 0.139 | 0.00 | 0.002 (0.000–0.011) | 0.251 | 0.00 |
 
-In this single-seed comparison the noise-related exceedances of ROBIN were not reproduced by Tree-Ring.
+In this single-seed comparison we did not reproduce the noise-related exceedances of ROBIN with Tree-Ring.
 
-## 6. Scope and limitations
+## 7. Scope and limitations
 
-Single primary detector (released ROBIN checkpoint) on one backbone (SD 2.1-base); five generation seeds
-sharing one prompt partition; comparators with one seed (and three conditions for DWT-DCT-SVD); synthetic
-English prompts; fixed composite severities; non-adaptive attacks only. Proposition-level guarantees apply
-only to unmodified non-watermarked inputs.
+We study a single primary detector (the released ROBIN checkpoint) on one backbone (SD 2.1-base); our five
+generation seeds share one prompt partition; we evaluate the comparators with one seed (and three conditions
+for DWT-DCT-SVD); we use synthetic English prompts, fixed composite severities and non-adaptive attacks only.
+The split-conformal guarantee we rely on applies only to unmodified non-watermarked inputs.

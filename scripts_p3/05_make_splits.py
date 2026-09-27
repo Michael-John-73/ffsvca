@@ -1,17 +1,17 @@
 """
 scripts_p3/05_make_splits.py
 
-Phase 2.5 / 4.1: split CLEAN and WATERMARKED scores into calibration / test
-pools by a shared prompt_id partition. Uses --split_seed for reproducibility.
+We split CLEAN and WATERMARKED scores into calibration / test
+pools by a shared prompt_id partition. We use --split_seed for reproducibility.
 
-Input:  outputs_p3/scores/scores_raw.csv
-Output: outputs_p3/splits/{cal_clean.csv, cal_watermarked.csv, test_clean.csv, test_watermarked.csv}
+We read:  outputs_p3/scores/scores_raw.csv
+We write: outputs_p3/splits/{cal_clean.csv, cal_watermarked.csv, test_clean.csv, test_watermarked.csv}
 
-Both cal and test watermarked pools are restricted to the SAME prompt_id
-partition as clean (cal_ids / test_ids), so M1/M2 (paper3.md §5.2) can be
-computed from cal_clean vs cal_watermarked without any test-split leakage.
-Every row keeps its `seed` (gen_seed) column so 06_compute_thresholds.py can
-group thresholds independently per seed (paper3.md §6.5).
+We restrict both cal and test watermarked pools to the SAME prompt_id
+partition as clean (cal_ids / test_ids), so we can compute M1/M2 from
+cal_clean vs cal_watermarked without any test-split leakage.
+We keep the `seed` (gen_seed) column on every row so 06_compute_thresholds.py
+can group thresholds independently per seed.
 """
 from __future__ import annotations
 
@@ -34,8 +34,8 @@ def main():
     args.out_dir.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(args.scores)
 
-    # Partition prompt_ids using the CLEAN none-attack pool (deterministic, shared
-    # by clean and watermarked so cal/test membership is consistent across labels).
+    # We partition prompt_ids using the CLEAN none-attack pool (deterministic, shared
+    # by clean and watermarked, so cal/test membership is consistent across labels).
     clean_none = df[(df.label == 0) & (df.attack_id == "none")].copy()
     prompt_ids = sorted(clean_none["prompt_id"].astype(str).unique().tolist())
     rng = np.random.default_rng(args.split_seed)

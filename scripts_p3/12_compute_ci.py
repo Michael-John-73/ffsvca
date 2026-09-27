@@ -1,13 +1,13 @@
 """
 scripts_p3/12_compute_ci.py
 
-Phase 5.6: bootstrap 95% confidence intervals for empirical_fpr / empirical_tpr
-per (method, alpha, attack_id). Resamples test_clean and test_watermarked
-prompt-IDs with replacement, independently within each gen_seed (paper3.md
-§6.5: thresholds/splits are per-seed and must never be pooled), then appends
-a cross-seed mean/std aggregate row (gen_seed = "all") per §6.3.
+We compute bootstrap 95% confidence intervals for empirical_fpr / empirical_tpr
+per (method, alpha, attack_id). We resample test_clean and test_watermarked
+prompt-IDs with replacement, independently within each gen_seed (we keep
+thresholds/splits per seed and never pool them), then append
+a cross-seed mean/std aggregate row (gen_seed = "all").
 
-Output: outputs_p3/metrics/ci_bootstrap.csv
+We write: outputs_p3/metrics/ci_bootstrap.csv
 """
 from __future__ import annotations
 

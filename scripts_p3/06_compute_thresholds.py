@@ -1,28 +1,28 @@
 """
 scripts_p3/06_compute_thresholds.py
 
-Phase 2.6 / 4.2: compute thresholds for M1 (Raw ROBIN), M2 (ROC-selected),
+We compute thresholds for M1 (Raw ROBIN), M2 (ROC-selected),
 M3 (Proposed fixed-FPR clean-quantile) for all alphas, independently per
-gen_seed (paper3.md §6.5 — thresholds must never be pooled across seeds).
+gen_seed; we never pool thresholds across seeds.
 
-Paper-canonical method definitions
-==================================
+Our method definitions (as in the paper)
+========================================
 - M1 Raw ROBIN
-    The reference threshold reported by ROBIN's own evaluation script. Read
-    from `--m1_threshold` if provided, else falls back to the midpoint of
+    We use the reference threshold reported by ROBIN's own evaluation script. We
+    read it from `--m1_threshold` if provided, else we fall back to the midpoint of
     cal_clean/cal_watermarked means on the `none` attack (calibration split
     only — never test data). M1 is alpha-independent.
 - M2 ROC-selected
-    Threshold maximizing Youden's J on CLEAN-vs-WATERMARKED scores from the
+    We pick the threshold maximizing Youden's J on CLEAN-vs-WATERMARKED scores from the
     CALIBRATION pool (cal_clean.csv + cal_watermarked.csv, attack_id=="none"
-    portion) — never the test split, to avoid selecting a threshold on the
-    same data used to evaluate it (paper3.md §5.2). M2 is alpha-independent.
+    portion) — never the test split, so we never select a threshold on the
+    same data we use to evaluate it. M2 is alpha-independent.
 - M3 Proposed (clean calibration quantile)
     tau_alpha = Q_{1-alpha}(score_z over cal_clean@none), per seed.
 
-Input:
+We read:
     outputs_p3/splits/{cal_clean.csv, cal_watermarked.csv, test_clean.csv, test_watermarked.csv}
-Output:
+We write:
     outputs_p3/thresholds/thresholds_by_method.csv
         columns: gen_seed, method, alpha, threshold
 """
@@ -40,7 +40,7 @@ from _common import conformal_quantile
 
 
 def roc_youden_threshold(neg: np.ndarray, pos: np.ndarray) -> float:
-    """Threshold that maximizes Youden's J = TPR - FPR on raw scores."""
+    """We return the threshold that maximizes Youden's J = TPR - FPR on raw scores."""
     s = np.concatenate([neg, pos])
     y = np.concatenate([np.zeros_like(neg, dtype=int),
                         np.ones_like(pos, dtype=int)])

@@ -1,18 +1,18 @@
 """
 scripts_p3/08c_eval_coco_real_fpr.py
 
-E7: Cross-domain real-image FPR on MS-COCO val 2017.
+E7: We measure cross-domain real-image FPR on MS-COCO val 2017.
 
-Reads a precomputed COCO-real score CSV (produced outside this pipeline by
+We read a precomputed COCO-real score CSV (which we produce outside this pipeline by
 running ROBIN inversion / scoring on non-SD natural photographs) and the
-M3 thresholds calibrated on SD-clean. For each (method, alpha, attack_id),
-reports the empirical FPR (all COCO images are by construction clean,
+M3 thresholds we calibrated on SD-clean. For each (method, alpha, attack_id),
+we report the empirical FPR (all COCO images are by construction clean,
 label = 0) with Wilson 95% CI and the delta_fpr = empirical_fpr - alpha.
 
-Expected input schema (outputs_p3/scores/coco_real_scores.csv):
+We expect this input schema (outputs_p3/scores/coco_real_scores.csv):
     image_id, attack_id, score_z
 
-Output: outputs_p3/metrics/e7_coco_real_fpr.csv
+We write: outputs_p3/metrics/e7_coco_real_fpr.csv
     columns: method, alpha, attack_id, n_eval, n_pos,
              empirical_fpr, fpr_ci_lo, fpr_ci_hi,
              calibration_error, delta_fpr, fpr_violation
@@ -56,7 +56,7 @@ def main():
     rows = []
     for alpha in args.alpha:
         for method in args.methods:
-            tau = threshold_for(thr, method, alpha, gen_seed=0)  # E7 reuses seed-0 calibration (Appendix A)
+            tau = threshold_for(thr, method, alpha, gen_seed=0)  # for E7 we reuse the seed-0 calibration (Appendix A)
             for atk in args.attacks:
                 neg = df[df.attack_id == atk]["score_z"].to_numpy()
                 n_eval = int(len(neg))

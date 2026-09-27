@@ -1,14 +1,14 @@
 """
 scripts_p3/23_treering_fpr.py  (local)
 
-Second detector (Tree-Ring, plan B2, generation seed 0) evaluated with the same
-protocol as ROBIN: split-conformal threshold from calibration clean images on the
+We evaluate our second detector (the Tree-Ring comparator (E10), generation seed 0) with the
+same protocol as ROBIN: a split-conformal threshold from calibration clean images on the
 unmodified condition (06_compute_thresholds.py, M3), FPR on test clean images for
 each of the 17 conditions, TPR/AUC on the unmodified condition.
-The same prompt partition (splits/cal_clean.csv, split_seed=42) and the same
-seed-0 ROBIN scores (scores_raw.csv) are evaluated side by side.
+We evaluate the same prompt partition (splits/cal_clean.csv, split_seed=42) and the same
+seed-0 ROBIN scores (scores_raw.csv) side by side.
 
-Writes sd21_results/outputs_p3/treering/metrics/
+We write sd21_results/outputs_p3/treering/metrics/
   treering_fpr.csv       per detector x alpha x condition
   treering_resplit.csv   exceedance frequency over re-drawn 500/500 partitions
   treering_summary.txt
@@ -44,7 +44,7 @@ def load() -> dict[str, pd.DataFrame]:
 
 
 def matrices(df: pd.DataFrame, attacks: list[str], pids: np.ndarray):
-    """clean scores as [n_prompts, n_attacks] and watermarked@none as [n_prompts]."""
+    """We return clean scores as [n_prompts, n_attacks] and watermarked@none as [n_prompts]."""
     c = df[df.label == 0].pivot(index="pid", columns="attack_id", values="score").loc[pids, attacks]
     w = df[(df.label == 1) & (df.attack_id == "none")].set_index("pid").score.loc[pids]
     return c.to_numpy(), w.to_numpy()
@@ -101,7 +101,7 @@ def main() -> None:
         ks_r = fpr.query("detector=='ROBIN' and attack_id==@atk").ks_vs_none.iloc[0]
         lines.append(f"  {atk:24s} " + "   ".join(s) + f"   KS {ks_t:.3f} | {ks_r:.3f}")
 
-    # re-drawn partitions: how often each condition exceeds alpha
+    # over re-drawn partitions we count how often each condition exceeds alpha
     rng = np.random.default_rng(RESPLIT_SEED)
     n = len(all_ids); n_cal = len(cal_ids)
     exc = {(d, a): np.zeros(len(attacks)) for d in det for a in ALPHAS}

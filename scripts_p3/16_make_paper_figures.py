@@ -1,7 +1,7 @@
 """
 scripts_p3/16_make_paper_figures.py
 
-Generate the paper figures (PDF + PNG) directly from outputs_p3/metrics/*.csv:
+We generate the paper figures (PDF + PNG) directly from outputs_p3/metrics/*.csv:
 
 Figure 1: FPR-per-attack bar chart (M1/M2/M3) at primary alpha=0.05.
 Figure 2: ROC-like (FPR, TPR) scatter colored by method, faceted by family.
@@ -10,10 +10,10 @@ Figure 4: Severity-sweep curves (JPEG quality, additive noise sigma) for M3.
 Figure 5: COCO real-image FPR bar chart with Wilson CI (E7, M3).
 Figure 6: Diffusion-regeneration TPR vs strength with Wilson CI (E8, M3).
 Figure 7: Score-distribution histogram (cal_clean vs test_clean@none vs
-          test_watermarked@none). Absorbs the descriptive role of the
+          test_watermarked@none). Here we absorb the descriptive role of our
           deprecated E3 script.
 
-Uses matplotlib only. All figures written to outputs_p3/figures/.
+We use matplotlib only and write all figures to outputs_p3/figures/.
 """
 from __future__ import annotations
 
@@ -89,7 +89,7 @@ def fig3(e4: pd.DataFrame, alpha: float, out: Path):
     seeds = sorted(per_seed.gen_seed.astype(str).unique())
     for i, s in enumerate(seeds):
         d = per_seed[per_seed.gen_seed.astype(str) == s].sort_values("size_effective")
-        # small multiplicative jitter so the per-seed error bars do not overlap
+        # we add a small multiplicative jitter so the per-seed error bars do not overlap
         x = d.size_effective * (1 + 0.03 * (i - (len(seeds) - 1) / 2))
         ax.errorbar(x, d.fpr_mean, yerr=d.fpr_std, marker="o", ms=3, ls="none",
                     capsize=2, alpha=0.7, label=f"seed {s} (mean $\\pm$ resampling std)")
@@ -99,7 +99,7 @@ def fig3(e4: pd.DataFrame, alpha: float, out: Path):
     ax.set_xscale("log")
     ax.set_xticks([30, 50, 100, 200, 500])
     ax.set_xticklabels(["30", "50", "100", "200", "500"])
-    # log axis adds minor labels (4x10^1, 3x10^2, ...) that overlap the major ones
+    # the log axis adds minor labels (4x10^1, 3x10^2, ...) that overlap the major ones; we hide them
     ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
     ax.set_xlabel("Calibration size $n_{cal}$")
     ax.set_ylabel("Empirical FPR (17-condition pool)")
@@ -110,14 +110,14 @@ def fig3(e4: pd.DataFrame, alpha: float, out: Path):
 
 
 def _extract_severity(attack_id: str, family_prefix: str) -> float | None:
-    """attack_id like 'jpeg_q50' or 'noise_s003' -> 50.0 or 0.03."""
+    """We map an attack_id like 'jpeg_q50' or 'noise_s003' to 50.0 or 0.03."""
     m = re.match(rf"^{family_prefix}_([qs])(\d+)$", attack_id)
     if not m:
         return None
     key, num = m.group(1), m.group(2)
     if key == "q":
         return float(num)
-    # noise ids encode sigma*100 (s001 -> 0.01, s008 -> 0.08)
+    # our noise ids encode sigma*100 (s001 -> 0.01, s008 -> 0.08)
     return int(num) / 100.0
 
 

@@ -1,36 +1,36 @@
 """
 scripts_p3/score_dwtdctsvd.py
 
-Producer of outputs_p3/scores/dwtdctsvd_scores.csv (consumed by 08e).
+We produce outputs_p3/scores/dwtdctsvd_scores.csv here; 08e consumes it.
 
-Detector: DwtDctSvd from the invisible-watermark library
+Our detector: DwtDctSvd from the invisible-watermark library
     https://github.com/ShieldMnt/invisible-watermark  (MIT)
     pip install invisible-watermark
-The watermark used by the public Stable Diffusion v1.5 / v2.1 release.
+It is the watermark used by the public Stable Diffusion v1.5 / v2.1 release.
 
-This is a *different family* than ROBIN: spatial-domain DWT + block DCT
+We chose it as a *different family* than ROBIN: spatial-domain DWT + block DCT
 + SVD with a fixed-length bit-message key, and no DDIM inversion step.
-The intent (App D / E9) is to show that the fixed-FPR verification
+Our intent (App D / E9) is to show that our fixed-FPR verification
 protocol generalizes across detector families, not to compare detector
 strengths.
 
-Pipeline per clean source image:
-    1. Embed a fixed K-bit key into a copy -> "watermarked" image.
+Our pipeline per clean source image:
+    1. We embed a fixed K-bit key into a copy -> "watermarked" image.
     2. For each attack in {none, jpeg_q50, cropping}:
-         a. apply attack to clean image    -> decode bits -> bit_acc_clean
-         b. apply attack to watermarked    -> decode bits -> bit_acc_wm
-       (Bit accuracy under the same fixed key is the natural score; for
-        clean images this concentrates near 0.5 by chance, for
+         a. we apply the attack to the clean image -> decode bits -> bit_acc_clean
+         b. we apply the attack to the watermarked -> decode bits -> bit_acc_wm
+       (We take bit accuracy under the same fixed key as the natural score; for
+        clean images it concentrates near 0.5 by chance, for
         watermarked images it concentrates near 1.0 and degrades with
         attack severity.)
-    3. score_z = bit_acc  (higher = more watermark-like, matches the
-       convention used elsewhere).
+    3. score_z = bit_acc  (higher = more watermark-like, matching the
+       convention we use elsewhere).
 
-Split assignment (matches §6.5 of 논문3.md):
+Our split assignment:
     cal_ratio of clean@none rows -> split=cal
     everything else              -> split=test
 
-Output columns:
+Our output columns:
     image_id, attack_id, source_label, split, score_z
 
 CLI:
@@ -52,7 +52,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-# Lazy import: invisible-watermark + cv2 are only required at runtime.
+# We import lazily: invisible-watermark + cv2 are only required at runtime.
 def _load_imwatermark():
     try:
         import cv2  # noqa: F401
@@ -80,7 +80,7 @@ def attack_jpeg_q50(img: Image.Image) -> Image.Image:
 
 
 def attack_cropping(img: Image.Image, ratio: float = 0.75) -> Image.Image:
-    """Center-crop to `ratio` of each side, then resize back to original size."""
+    """We center-crop to `ratio` of each side, then resize back to original size."""
     w, h = img.size
     cw, ch = int(w * ratio), int(h * ratio)
     left, top = (w - cw) // 2, (h - ch) // 2
@@ -120,7 +120,7 @@ def decode_bit_accuracy(decoder, bgr_np, key_bits: List[int]) -> float:
 # ---- main -------------------------------------------------------------------
 
 def pil_to_bgr(img: Image.Image) -> np.ndarray:
-    """PIL RGB -> OpenCV BGR uint8 ndarray."""
+    """We convert PIL RGB -> OpenCV BGR uint8 ndarray."""
     arr = np.asarray(img.convert("RGB"), dtype=np.uint8)
     return arr[:, :, ::-1].copy()
 

@@ -1,17 +1,17 @@
 """
 scripts_p3/02_build_attack_manifest.py
 
-Phase 3.3: Materialize the canonical 17-attack manifest (1 clean + 11 single-stage
-including the severity sweep + 5 composite) with FIXED severities, matching
-논문3.md §6.4(b). The severity sweep (jpeg quality, noise sigma) is required
-for RQ3/E6 (Fig. 4) and MUST be present as first-class attack ids, not merged
-into a single "jpeg"/"noise" entry.
+We materialize the canonical 17-attack manifest (1 clean + 11 single-stage
+including the severity sweep + 5 composite) with FIXED severities. We need
+the severity sweep (jpeg quality, noise sigma) for RQ3/E6 (Fig. 4), so we
+MUST keep it as first-class attack ids, not merged into a single
+"jpeg"/"noise" entry.
 
-This is a record-keeping/document script. The actual attacks are applied
+We use this script for record keeping only. We apply the actual attacks
 inside robin_official/inject_wm_inner_latent_robin.py via --attack_list with
-the same identifiers used here (joined by `+` for composites).
+the same identifiers we use here (joined by `+` for composites).
 
-Output: outputs_p3/manifests/attack_manifest.json
+We write: outputs_p3/manifests/attack_manifest.json
 """
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ def main():
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(ATTACK_MANIFEST, indent=2), encoding="utf-8")
     n_total = len(ATTACK_MANIFEST["attacks"])
-    assert n_total == 17, f"expected 17 attack_ids per §6.4(b), got {n_total}"
+    assert n_total == 17, f"expected 17 attack_ids in the manifest, got {n_total}"
     print(f"[02] Wrote {n_total} attacks -> {args.out}")
 
 

@@ -1,20 +1,20 @@
 """
 scripts_p3/08d_eval_adaptive_regen.py
 
-E8: Adaptive regeneration stress test.
+E8: Our adaptive regeneration stress test.
 
-Watermarked images are regenerated with SD 1.5 img2img at strengths
-{0.2, 0.3, 0.5}. Regenerated images are scored with ROBIN. We report:
+We regenerate watermarked images with SD 2.1-base img2img at strengths
+{0.2, 0.3, 0.5} and score the regenerated images with ROBIN. We report:
     - empirical_tpr  = fraction of regenerated images still detected as
-                       watermarked under M3 thresholds (TPR drop is expected)
+                       watermarked under M3 thresholds (we expect a TPR drop)
     - empirical_fpr_clean = control: FPR on the matched clean regenerated
-                            pool (must remain near alpha if calibration holds)
+                            pool (it must remain near alpha if calibration holds)
 
-Expected input schema (outputs_p3/scores/regen_scores.csv):
+We expect this input schema (outputs_p3/scores/regen_scores.csv):
     image_id, strength, source_label, score_z
 where source_label in {"watermarked", "clean"}.
 
-Output: outputs_p3/metrics/e8_adaptive_regen.csv
+We write: outputs_p3/metrics/e8_adaptive_regen.csv
     columns: method, alpha, strength, n_wm, tpr, tpr_ci_lo, tpr_ci_hi,
              n_clean, fpr, fpr_ci_lo, fpr_ci_hi, delta_fpr
 """
@@ -57,7 +57,7 @@ def main():
     rows = []
     for alpha in args.alpha:
         for method in args.methods:
-            tau = threshold_for(thr, method, alpha, gen_seed=0)  # E8 reuses seed-0 calibration (Appendix A)
+            tau = threshold_for(thr, method, alpha, gen_seed=0)  # for E8 we reuse the seed-0 calibration (Appendix A)
             for s in args.strengths:
                 sub = df[np.isclose(df.strength, s)]
                 wm = sub[sub.source_label == "watermarked"]["score_z"].to_numpy()

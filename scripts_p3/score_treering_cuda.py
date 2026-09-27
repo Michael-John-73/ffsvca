@@ -1,20 +1,20 @@
 """
 scripts_p3/score_treering_cuda.py  (RunPod / CUDA)
 
-Second-detector experiment (plan B2), one generation seed:
+Our second-detector experiment (the Tree-Ring comparator (E10)), one generation seed:
   label 0: archived clean image  x 17 attack conditions (attack_manifest.json)
   label 1: Tree-Ring image       x "none" only
-= 18 inversions per prompt, batched in one UNet pass per DDIM step.
+= 18 inversions per prompt, which we batch in one UNet pass per DDIM step.
 
-Inversion is the same as 03_score_attacks_cuda.py (same CudaRobinPipe adapter,
+Our inversion is the same as 03_score_attacks_cuda.py (same CudaRobinPipe adapter,
 null prompt, guidance 1.0, 50 steps, same attack code and rng_seed). From the
-single pass two distances are read:
+single pass we read two distances:
   tr_distance    : Tree-Ring l1_complex distance on the fully inverted latent x_T
                    (official detection point)
-  robin_distance : ROBIN distance on buf[--steps], exactly as in the main run;
-                   used only to check that this run reproduces scores_raw.csv.
+  robin_distance : ROBIN distance on buf[--steps], exactly as in our main run;
+                   we use it only to check that this run reproduces scores_raw.csv.
 
-Output (resumable, appended per prompt):
+We write (resumable, appended per prompt):
   outputs_p3/treering/scores/seed_N/treering_scores.csv
   columns: prompt_id,seed,attack_id,label,tr_distance,robin_distance
 
@@ -55,7 +55,7 @@ def log(msg: str) -> None:
 
 
 def tr_distance(x_T: torch.Tensor, gt_patch: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-    """Official eval_watermark (l1_complex), per batch item."""
+    """We reproduce the official eval_watermark (l1_complex), per batch item."""
     fft = torch.fft.fftshift(torch.fft.fft2(x_T.to(torch.float32)), dim=(-1, -2))
     m = mask[0]
     return torch.abs(fft[:, m] - gt_patch[0][m].unsqueeze(0)).mean(dim=1)

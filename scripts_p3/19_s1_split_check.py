@@ -1,18 +1,18 @@
 """
 scripts_p3/19_s1_split_check.py
 
-Reviewer-2 S1 check: is M3's unmodified-condition FPR systematically below the
-split-conformal expectation 1 - k/(n+1), and is that due to the single prompt
-partition (split_seed=42) shared by all generation seeds?
+We check whether M3's unmodified-condition FPR is systematically below the
+split-conformal expectation 1 - k/(n+1), and whether that is due to the single prompt
+partition (split_seed=42) shared by all generation seeds.
 
-Steps
-  A. Confirm the cal/test prompt partition is identical across seeds.
-  B. Reproduce per-seed M3 FPR on `none` from the stored splits.
-  C. Compare the 5-seed mean with 1 - k/(n+1) using the Beta(n-k+1, k) + Binomial(m, r)
+Our steps
+  A. We confirm the cal/test prompt partition is identical across seeds.
+  B. We reproduce per-seed M3 FPR on `none` from the stored splits.
+  C. We compare the 5-seed mean with 1 - k/(n+1) using the Beta(n-k+1, k) + Binomial(m, r)
      model of Remark 1 (independent seeds).
-  D. Re-split: R random 50/50 prompt partitions (shared across seeds, as in the
-     pipeline) -> distribution of the 5-seed mean FPR; locate split_seed=42 in it.
-  E. Cross-seed dependence: correlation of non-watermarked `none` scores of the same
+  D. We re-split: R random 50/50 prompt partitions (shared across seeds, as in our
+     pipeline) -> distribution of the 5-seed mean FPR; we locate split_seed=42 in it.
+  E. Cross-seed dependence: we correlate non-watermarked `none` scores of the same
      prompt across generation seeds.
 """
 from __future__ import annotations

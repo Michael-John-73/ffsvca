@@ -1,31 +1,31 @@
 """
 scripts_p3/08e_eval_dwtdctsvd_comparator.py
 
-E9 (Appendix D): Cross-family comparator on DwtDctSvd (invisible-watermark
-library, ShieldMnt/invisible-watermark, MIT). The watermark used by the
+E9 (Appendix D): Our cross-family comparator on DwtDctSvd (invisible-watermark
+library, ShieldMnt/invisible-watermark, MIT), the watermark used by the
 public Stable Diffusion v1.5 / v2.1 release.
 
-Purpose: demonstrate that the fixed-FPR verification protocol (M3 split
+Purpose: we demonstrate that our fixed-FPR verification protocol (M3 split
 conformal threshold) generalizes to a detector from a *different family*
 than ROBIN (which is FFT-ring + DDIM-inversion). DwtDctSvd is a classical
 spatial-domain blind watermark with bit-message decoding and no inversion
-step, so portability evidence here is genuinely cross-family rather than
+step, so our portability evidence here is genuinely cross-family rather than
 an ablation of the same FFT-ring code path.
 
-Score convention for this comparator:
+Our score convention for this comparator:
     score_z = bit_accuracy ∈ [0, 1]
         = (# bits matching the embedded key) / key_length
-Higher score_z => more confident watermark presence (consistent with the
-"higher = positive" convention used elsewhere in this codebase).
+We read higher score_z as more confident watermark presence (consistent with the
+"higher = positive" convention we use elsewhere in this codebase).
 
-Expected input schema (outputs_p3_appd/scores/dwtdctsvd_scores.csv):
+We expect this input schema (outputs_p3_appd/scores/dwtdctsvd_scores.csv):
     image_id, attack_id, source_label, split, score_z
 where:
     attack_id     in {none, jpeg_q50, cropping}
     source_label  in {clean, watermarked}
-    split         in {cal, test}    # cal rows used only when source_label=clean
+    split         in {cal, test}    # we use cal rows only when source_label=clean
 
-Output: outputs_p3_appd/metrics/e9_dwtdctsvd_comparator.csv
+We write: outputs_p3_appd/metrics/e9_dwtdctsvd_comparator.csv
     columns:
         detector, method, alpha, attack_id,
         n_clean, n_wm,

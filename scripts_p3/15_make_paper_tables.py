@@ -1,11 +1,11 @@
 """
 scripts_p3/15_make_paper_tables.py
 
-Emit the canonical paper tables as CSV (machine-readable) for inclusion
-in the manuscript. Also absorbs the previous 13_build_operating_range_summary
-and 14_build_final_summary scripts.
+We emit the canonical paper tables as CSV (machine-readable) for inclusion
+in the manuscript. We also absorb our previous 13_build_operating_range_summary
+and 14_build_final_summary scripts here.
 
-Tables produced (default alpha = 0.05):
+Tables we produce (default alpha = 0.05):
     Table 1: threshold method comparison (M1/M2/M3) at alpha=0.05
     Table 2: FPR drift summary per family + worst-case (M3 only)
     Table 3: failure-condition summary (V_t, ViolationRate, OOD drift)
@@ -15,7 +15,7 @@ Tables produced (default alpha = 0.05):
     operating_range_summary.csv (per method/alpha, safe vs unsafe families)
     final_summary.csv (merged E1/E2/E5 + CI per (method,alpha,attack_id))
 
-Output dirs:
+Our output dirs:
     outputs_p3/tables/ (paper tables)
     outputs_p3/metrics/ (summary CSVs)
 """
@@ -131,8 +131,8 @@ def main():
                   index=False)
 
     # --- Table 7: DwtDctSvd cross-family comparator (E9, App D) ---
-    # App D uses a separate output root (outputs_p3_appd/) so as not to
-    # pollute the primary ROBIN outputs (outputs_p3/).
+    # For App D we use a separate output root (outputs_p3_appd/) so we do not
+    # pollute our primary ROBIN outputs (outputs_p3/).
     appd_root = args.metrics_dir.parent.parent / "outputs_p3_appd"
     e9_path = appd_root / "metrics" / "e9_dwtdctsvd_comparator.csv"
     if e9_path.exists():

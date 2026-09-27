@@ -1,9 +1,9 @@
 """
 scripts_p3/17_run_quality_checks.py
 
-Phase 7: quality / sanity checks before paper submission.
+We run quality / sanity checks before paper submission.
 
-Checks:
+We check:
     Q1  outputs_p3/scores/scores_raw.csv exists, no NaN in score_z, label in {0,1}
     Q2  attack_id set matches manifest exactly (17 attacks)
     Q3  thresholds_by_method.csv has rows for {M1,M2,M3} x alpha set
@@ -14,9 +14,9 @@ Checks:
         outputs_p3/logs/* (regression guard)
     Q7  At least one alpha-row per (method, alpha) reports empirical_fpr <= 1.0
 
-Writes PASS/FAIL report:
+We write a PASS/FAIL report to:
     outputs_p3/logs/quality_checks.log
-Exits with non-zero status if any check fails.
+We exit with non-zero status if any check fails.
 """
 from __future__ import annotations
 
@@ -94,7 +94,7 @@ def main():
             log.append(f"[INFO] Q4b {name} not present (optional, needs external scoring)")
 
     # Q4c (optional: DwtDctSvd cross-family comparator — warn-only, App D)
-    # App D lives under outputs_p3_appd/ (separate from ROBIN's outputs_p3/).
+    # We keep App D under outputs_p3_appd/ (separate from our ROBIN outputs_p3/).
     appd_metrics = metrics.parent.parent / "outputs_p3_appd" / "metrics"
     p = appd_metrics / "e9_dwtdctsvd_comparator.csv"
     if p.exists():

@@ -1,24 +1,24 @@
 """
 scripts_p3/gen_treering_cuda.py  (RunPod / CUDA)
 
-Second-detector experiment (plan B2): generate Tree-Ring watermarked images on
-the SAME SD2.1-base pipeline, prompts and per-image initial latents as the
-archived non-watermarked images (outputs_p3/clean/seed_N/ori-lg7.5-{i}.jpg,
-produced by gen_pairs_cuda.py).
+Our second-detector experiment (the Tree-Ring comparator (E10)): we generate Tree-Ring
+watermarked images on the SAME SD2.1-base pipeline, prompts and per-image initial latents
+as our archived non-watermarked images (outputs_p3/clean/seed_N/ori-lg7.5-{i}.jpg,
+which gen_pairs_cuda.py produced).
 
-Tree-Ring configuration = official repo README command
+We use the Tree-Ring configuration of the official repo README command
 (github.com/YuxinWenRick/tree-ring-watermark):
     --w_channel 3 --w_pattern ring ; argparse defaults w_radius=10,
     w_mask_shape=circle, w_seed=999999, w_injection=complex,
     w_measurement=l1_complex.
-circle_mask / ring pattern / injection below reproduce the official
+Our circle_mask / ring pattern / injection below reproduce the official
 optim_utils.py functions (the ROBIN fork changed circle_mask to an annulus
-r_min < d <= r_max, which would drop the DC bin, so it is NOT used here).
-FFTs are taken in float32 (official code runs them on the fp16 latent).
+r_min < d <= r_max, which would drop the DC bin, so we do NOT use it here).
+We take FFTs in float32 (official code runs them on the fp16 latent).
 
-Initial latents: set_random_seed(i + gen_seed) -> pipe.get_random_latents(),
+Initial latents: we use set_random_seed(i + gen_seed) -> pipe.get_random_latents(),
 identical to gen_pairs_cuda.py, so each Tree-Ring image shares its initial
-noise with the archived clean image before the key is written into it.
+noise with the archived clean image before we write the key into it.
 
 Usage (pod, repo root = /workspace/PAPER3):
     python scripts_p3/gen_treering_cuda.py --gen_seed 0 --start 0 --end 20     # pilot
@@ -59,13 +59,13 @@ def load_prompts(path: Path) -> list[str]:
 
 
 def is_black(img: Image.Image, mean_thr: float = 2.0, std_thr: float = 1.0) -> bool:
-    """Same criterion as gen_pairs_cuda.py."""
+    """We use the same criterion as gen_pairs_cuda.py."""
     arr = np.asarray(img.convert("RGB"), dtype=np.float32)
     return bool(arr.mean() < mean_thr and arr.std() < std_thr)
 
 
 def tr_circle_mask(size: int = 64, r: int = 10) -> np.ndarray:
-    """Official Tree-Ring circle_mask (disk d <= r, DC bin included)."""
+    """We reproduce the official Tree-Ring circle_mask (disk d <= r, DC bin included)."""
     x0 = y0 = size // 2
     y, x = np.ogrid[:size, :size]
     y = y[::-1]
@@ -79,7 +79,7 @@ def tr_watermarking_mask(shape, device) -> torch.Tensor:
 
 
 def tr_ring_pattern(pipe, device) -> torch.Tensor:
-    """Official get_watermarking_pattern, w_pattern='ring'."""
+    """We reproduce the official get_watermarking_pattern, w_pattern='ring'."""
     set_random_seed(TR_SEED)
     gt_init = pipe.get_random_latents().to(torch.float32)
     gt_patch = torch.fft.fftshift(torch.fft.fft2(gt_init), dim=(-1, -2))
@@ -92,7 +92,7 @@ def tr_ring_pattern(pipe, device) -> torch.Tensor:
 
 
 def tr_inject(latents: torch.Tensor, mask: torch.Tensor, gt_patch: torch.Tensor) -> torch.Tensor:
-    """Official inject_watermark, w_injection='complex' (batched)."""
+    """We reproduce the official inject_watermark, w_injection='complex' (batched)."""
     dtype = latents.dtype
     fft = torch.fft.fftshift(torch.fft.fft2(latents.to(torch.float32)), dim=(-1, -2))
     b = latents.shape[0]
@@ -102,7 +102,7 @@ def tr_inject(latents: torch.Tensor, mask: torch.Tensor, gt_patch: torch.Tensor)
 
 
 def load_key(path: Path, pipe, device):
-    """Build the key once and persist it; later runs (and the scorer) reuse the file."""
+    """We build the key once and persist it; our later runs (and the scorer) reuse the file."""
     if path.exists():
         k = torch.load(path, map_location=device)
         return k["gt_patch"].to(device), k["mask"].to(device)

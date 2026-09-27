@@ -1,16 +1,16 @@
 #!/bin/bash
-# scripts_p3/resume_treering_b2.sh — continue the Tree-Ring B2 run on a fresh pod.
+# scripts_p3/resume_treering_b2.sh — we continue the Tree-Ring comparator (E10) run on a fresh pod.
 # 1) local:  runpodctl send treering_b2_resume.tar      (prints a code)
 # 2) pod:    cd /workspace && runpodctl receive <code> && tar -xf treering_b2_resume.tar
 # 3) pod:    bash /workspace/PAPER3/scripts_p3/resume_treering_b2.sh
-# Generation skips existing images and scoring skips prompts already in treering_scores.csv.
+# Our generation skips existing images and our scoring skips prompts already in treering_scores.csv.
 set -euo pipefail
 cd /workspace/PAPER3
 export HF_HOME=/workspace/hf_cache
 grep -q 'HF_HOME=/workspace/hf_cache' ~/.bashrc || echo 'export HF_HOME=/workspace/hf_cache' >> ~/.bashrc
 
 echo "[STEP] setup $(date)"
-# 7GB root disk cannot hold torch 2.3.1: use a venv on /workspace (see paper3_status memory)
+# the 7GB root disk cannot hold torch 2.3.1, so we use a venv on /workspace
 [ -n "${VIRTUAL_ENV:-}" ] || bash scripts_p3/runpod_setup.sh
 pip install --no-cache-dir -q "huggingface_hub==0.23.4"
 python -c "import torch,diffusers,huggingface_hub as h;print('[STEP] versions torch',torch.__version__,'cuda',torch.cuda.is_available(),'diffusers',diffusers.__version__,'hf_hub',h.__version__)"

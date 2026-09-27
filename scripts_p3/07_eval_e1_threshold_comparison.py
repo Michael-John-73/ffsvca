@@ -1,22 +1,21 @@
 """
 scripts_p3/07_eval_e1_threshold_comparison.py
 
-E1: Threshold method comparison (M1 vs M2 vs M3) on CLEAN test pool.
+E1: We compare threshold methods (M1 vs M2 vs M3) on the CLEAN test pool.
 
-paper3.md §6.5: thresholds are computed independently per gen_seed and must
-never be pooled. This script therefore evaluates each gen_seed's test split
-against THAT seed's threshold, then reports both the per-seed rows and the
-cross-seed aggregate (mean ± std over the 5 seeds), matching §6.3's "reported
-as mean ± std across seeds".
+We compute thresholds independently per gen_seed and never pool them. We
+therefore evaluate each gen_seed's test split against THAT seed's threshold,
+then report both the per-seed rows and the cross-seed aggregate (mean ± std
+over the 5 seeds), since we report results as mean ± std across seeds.
 
-For each method, alpha, gen_seed:
+For each method, alpha, gen_seed we compute:
     - empirical_fpr on that seed's test_clean.csv (per attack)
     - empirical_tpr on that seed's test_watermarked.csv (per attack)
     - calibration_error = |empirical_fpr - alpha|
     - auc on that seed's test_clean / test_watermarked@none
 
-Output: outputs_p3/metrics/e1_threshold_comparison.csv
-    (gen_seed column holds an int for per-seed rows, or "all" for the
+We write: outputs_p3/metrics/e1_threshold_comparison.csv
+    (we store an int in the gen_seed column for per-seed rows, or "all" for the
     cross-seed mean/std aggregate row of the same method/alpha/attack_id)
 """
 from __future__ import annotations
@@ -81,7 +80,7 @@ def main():
                         "auc_none": auc_none,
                     })
 
-        # Paired McNemar test on `none` attack only (M3 vs M1, M3 vs M2), per seed.
+        # We run a paired McNemar test on the `none` attack only (M3 vs M1, M3 vs M2), per seed.
         none_scores = np.concatenate([tcl_none, twm_none])
         none_labels = np.concatenate([
             np.zeros_like(tcl_none, dtype=int), np.ones_like(twm_none, dtype=int)])

@@ -1,12 +1,12 @@
 """
 scripts_p3/_attack_scoring_common.py
 
-Shared attack-application + resumable scoring loop used by both backends:
+Our shared attack-application + resumable scoring loop, which both backends use:
 - 03_score_attacks.py       (OpenVINO / Intel Arc GPU, local machine)
 - 03_score_attacks_cuda.py  (CUDA, external GPU)
 
-Kept identical across backends so scores are comparable regardless of which
-GPU actually ran Phase 2. Any backend-specific pipeline just needs to expose:
+We keep it identical across backends so scores are comparable regardless of which
+GPU actually ran the scoring. Any backend-specific pipeline just needs to expose:
     pipe.get_text_embedding(prompt) -> tensor
     pipe.get_image_latents(image_tensor, sample=False) -> tensor
     pipe.forward_diffusion(latents=..., text_embeddings=..., guidance_scale=1.0,
@@ -27,7 +27,7 @@ from optim_utils import set_random_seed, eval_watermark, transform_img
 
 
 class WmArgs:
-    """Minimal args namespace for optim_utils.get_watermarking_mask/eval_watermark."""
+    """Our minimal args namespace for optim_utils.get_watermarking_mask/eval_watermark."""
     w_channel = 3
     w_pattern = "ring"
     w_mask_shape = "circle"
@@ -70,9 +70,9 @@ def apply_attack(img: Image.Image, stages: list, rng_seed: int) -> Image.Image:
 
 def batched_ring_distance(reversed_latents: torch.Tensor, gt_patch: torch.Tensor,
                            watermarking_mask: torch.Tensor) -> torch.Tensor:
-    """Vectorized equivalent of optim_utils.eval_watermark's l1_complex distance,
-    computed independently per batch item. reversed_latents: [B,C,H,W] real.
-    Returns a 1-D tensor of B distances (same formula/scale as eval_watermark).
+    """We compute a vectorized equivalent of optim_utils.eval_watermark's l1_complex distance,
+    independently per batch item. reversed_latents: [B,C,H,W] real.
+    We return a 1-D tensor of B distances (same formula/scale as eval_watermark).
     """
     fft = torch.fft.fftshift(torch.fft.fft2(reversed_latents.to(torch.float32)), dim=(-1, -2))
     mask = watermarking_mask[0] if watermarking_mask.dim() == 4 else watermarking_mask
@@ -87,8 +87,8 @@ def run_scoring_loop(pipe, opt_wm, watermarking_mask, null_emb, attacks,
                       clean_dir: Path, wm_dir: Path, out_dir: Path,
                       steps: int, num_inference_steps: int,
                       checkpoint_every: int = 10):
-    """Backend-agnostic scoring loop. `pipe` must expose the 3 methods
-    documented at module level. Writes/resumes outputs_p3/scores/seed_N/<attack_id>/scores.json.
+    """Our backend-agnostic scoring loop. `pipe` must expose the 3 methods
+    we document at module level. We write/resume outputs_p3/scores/seed_N/<attack_id>/scores.json.
     """
     wargs = WmArgs()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -159,10 +159,10 @@ def run_scoring_loop_batched(pipe, opt_wm, watermarking_mask, null_emb, attacks,
                               clean_dir: Path, wm_dir: Path, out_dir: Path,
                               steps: int, num_inference_steps: int,
                               checkpoint_every: int = 10, batch_size: int = 34):
-    """CUDA-only variant of run_scoring_loop: batches all pending (attack, label)
+    """Our CUDA-only variant of run_scoring_loop: we batch all pending (attack, label)
     variants of an image together into one UNet forward pass per DDIM step,
-    instead of 34 sequential batch=1 calls. Same output contract/format as
-    run_scoring_loop. Not used by the OpenVINO backend (static-shape IR models
+    instead of 34 sequential batch=1 calls. We keep the same output contract/format as
+    run_scoring_loop. We do not use it in the OpenVINO backend (static-shape IR models
     cannot change batch size without recompilation).
     """
     wargs = WmArgs()

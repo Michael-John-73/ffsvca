@@ -1,19 +1,19 @@
 """
 scripts_p3/11_eval_failure_conditions.py
 
-E5: Failure-condition analysis (Section 5.5).
+E5: Our failure-condition analysis (Section 5.5).
 
-paper3.md §6.5: thresholds are per-seed and must never be pooled. Computed
-independently per gen_seed, then a cross-seed mean/std aggregate row
-(gen_seed = "all") is appended, matching §6.3.
+We compute thresholds per seed and never pool them. We compute the metrics
+independently per gen_seed, then append a cross-seed mean/std aggregate row
+(gen_seed = "all").
 
-For each (method, alpha, gen_seed) computes:
+For each (method, alpha, gen_seed) we compute:
     V_t            = total number of violating attacks (empirical_fpr > alpha)
     ViolationRate  = V_t / |attacks|
     delta_fpr_OOD  = mean empirical_fpr - alpha over cross-family composite attacks
     failing_attacks = ";"-joined list of failing attack_ids
 
-Output: outputs_p3/metrics/e5_failure_conditions.csv
+We write: outputs_p3/metrics/e5_failure_conditions.csv
 """
 from __future__ import annotations
 

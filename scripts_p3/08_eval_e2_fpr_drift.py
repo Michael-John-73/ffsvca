@@ -1,23 +1,23 @@
 """
 scripts_p3/08_eval_e2_fpr_drift.py
 
-E2: FPR drift under attack, with worst-case columns (GAP-2).
+E2: We measure FPR drift under attack, with worst-case columns.
 
-paper3.md §6.5: thresholds are per-seed and must never be pooled. Each
-gen_seed's test split is evaluated against THAT seed's threshold; per-seed
-rows are written (gen_seed = 0..4) plus a cross-seed mean/std aggregate row
-(gen_seed = "all"), matching §6.3.
+We compute thresholds per seed and never pool them. We evaluate each
+gen_seed's test split against THAT seed's threshold; we write per-seed
+rows (gen_seed = 0..4) plus a cross-seed mean/std aggregate row
+(gen_seed = "all").
 
-For each (method, alpha, gen_seed):
+For each (method, alpha, gen_seed) we compute:
     - per-attack empirical_fpr, empirical_tpr, calibration_error
     - delta_fpr     = empirical_fpr - alpha
     - fpr_violation = 1[empirical_fpr > alpha]
     - worst_case_fpr / worst_case_tpr / worst_attack_fpr / worst_attack_tpr
-      computed across attacks within the family (ID-single / same-family
-      composite / cross-family composite). worst-case rows are appended
+      across attacks within the family (ID-single / same-family
+      composite / cross-family composite). We append the worst-case rows
       with attack_id = "_worst".
 
-Output: outputs_p3/metrics/e2_fpr_drift.csv
+We write: outputs_p3/metrics/e2_fpr_drift.csv
 """
 from __future__ import annotations
 
@@ -78,7 +78,7 @@ def main():
                     per_attack.append(row)
                     rows.append(row)
 
-                # Worst-case per family (within this seed)
+                # We take the worst case per family (within this seed)
                 df_pa = pd.DataFrame(per_attack)
                 for fam, sub in df_pa.groupby("family"):
                     if len(sub) == 0: continue

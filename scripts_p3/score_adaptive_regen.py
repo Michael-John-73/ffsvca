@@ -1,26 +1,25 @@
 """
 scripts_p3/score_adaptive_regen.py
 
-Producer of outputs_p3/scores/regen_scores.csv (consumed by 08d_eval_adaptive_regen.py, E8).
+We produce outputs_p3/scores/regen_scores.csv here; 08d_eval_adaptive_regen.py (E8) consumes it.
 
-paper3.md §6.4(d): SD 1.5 img2img regeneration applied to watermarked images
+We apply SD 2.1-base img2img regeneration to watermarked images
 at strength in {0.2, 0.3, 0.5}, with the SAME prompt as the original
-generation, plus a matched clean control regenerated at the same strengths.
-Single seed (gen_seed=0, per Appendix A).
+generation, plus a matched clean control that we regenerate at the same strengths.
+We use a single seed (gen_seed=0, per Appendix A).
 
-Sample composition (per paper3_flow_실험정합성_검토.md §6.1, already-approved
-plan): 200 source pairs (clean_i, watermarked_i) x 2 classes x 3 strengths
-= 1200 regenerated images total.
+Our sample composition: 200 source pairs (clean_i, watermarked_i) x 2 classes
+x 3 strengths = 1200 regenerated images total.
 
-img2img is implemented manually (partial re-noising + truncated denoising
+We implement img2img manually (partial re-noising + truncated denoising
 loop over the pipeline's own unet/scheduler) since InversableStableDiffusionPipeline
-has no built-in strength-based img2img call; this does not modify
+has no built-in strength-based img2img call; we do not modify
 robin_official/ (substrate untouched).
 
 Usage:
     python scripts_p3/score_adaptive_regen.py --num_images 200 --gen_seed 0
 
-Output columns: image_id, strength, source_label, score_z
+Our output columns: image_id, strength, source_label, score_z
     source_label in {"watermarked", "clean"}
 """
 from __future__ import annotations
@@ -92,9 +91,9 @@ def main():
     ap.add_argument("--wm_dir", type=Path, default=None)
     ap.add_argument("--wm_ckpt", default=str(Path(__file__).resolve().parents[2] / "robin_official" / "ckpts" / "optimized_r5_15_step10.pt"))
     ap.add_argument("--out", type=Path, default=Path("outputs_p3/scores/regen_scores.csv"))
-    # stabilityai/stable-diffusion-2-1-base is gated (HTTP 401); this is the open mirror.
+    # stabilityai/stable-diffusion-2-1-base is gated (HTTP 401); we use this open mirror.
     ap.add_argument("--model_id", default="sd2-community/stable-diffusion-2-1-base")
-    # the mirror has no fp16 branch; fp16 comes from torch_dtype, not from this.
+    # the mirror has no fp16 branch; we get fp16 from torch_dtype, not from this.
     ap.add_argument("--variant", default=None)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--steps", type=int, default=35)

@@ -1,4 +1,4 @@
-"""Emit LaTeX rows for the Tree-Ring appendix table (alpha=0.05) and check |dFPR| <= KS."""
+"""We emit LaTeX rows for the Tree-Ring appendix table (alpha=0.05) and check |dFPR| <= KS."""
 from pathlib import Path
 
 import pandas as pd

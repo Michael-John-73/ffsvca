@@ -1,21 +1,21 @@
 """
 scripts_p3/01_build_prompt_list.py
 
-Phase 2.1 / 3.2: build the prompt list for ROBIN clean/watermarked image generation.
+We build the prompt list for ROBIN clean/watermarked image generation.
 
-Sources prompts from MS-COCO captions if available
-(robin_official/coco/captions_val2017.json), otherwise falls back to a
+We source prompts from MS-COCO captions if available
+(robin_official/coco/captions_val2017.json); otherwise we fall back to a
 combinatorial synthetic prompt generator (see `build_combinatorial_bank`).
-The output CSV is consumed by gen_clean_image.py /
-inject_wm_inner_latent_robin.py via --start/--end indexing.
+gen_clean_image.py / inject_wm_inner_latent_robin.py consume our output CSV
+via --start/--end indexing.
 
-Why combinatorial (not a small fixed bank): the paper's statistical machinery
+Why we use a combinatorial bank (not a small fixed bank): our statistical machinery
 (split-conformal calibration, Wilson/bootstrap CIs over n=1000) assumes a
-reasonably diverse, roughly-representative sample. Sampling with replacement
-from a ~15-item bank collapses the effective sample size to ~15 x n_seeds
+reasonably diverse, roughly-representative sample. If we sampled with replacement
+from a ~15-item bank, we would collapse the effective sample size to ~15 x n_seeds
 distinct generations (each duplicated ~65x), which would silently invalidate
-every downstream CI. The combinatorial bank below has tens of thousands of
-distinct combinations, so `n=1000` draws without replacement are unique.
+every downstream CI. Our combinatorial bank below has tens of thousands of
+distinct combinations, so our `n=1000` draws without replacement are unique.
 
 Usage:
     python scripts_p3/01_build_prompt_list.py --n 5    --mode debug
@@ -70,9 +70,9 @@ def load_coco_captions(coco_path: Path, n: int, seed: int) -> list[str]:
 
 
 def build_combinatorial_bank(n: int, seed: int) -> list[str]:
-    """Deterministically sample n *distinct* prompts from the SUBJECTS x
+    """We deterministically sample n *distinct* prompts from the SUBJECTS x
     SETTINGS x STYLES x MODIFIERS cartesian product (tens of thousands of
-    combinations), used only when real COCO captions are unavailable."""
+    combinations); we use this only when real COCO captions are unavailable."""
     combos = list(itertools.product(STYLES, SUBJECTS, SETTINGS, MODIFIERS))
     rng = random.Random(seed)
     rng.shuffle(combos)

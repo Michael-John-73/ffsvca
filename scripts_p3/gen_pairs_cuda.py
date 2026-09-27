@@ -1,24 +1,24 @@
 """
 scripts_p3/gen_pairs_cuda.py
 
-RunPod/CUDA generator for paired non-watermarked + watermarked images using
+We generate paired non-watermarked + watermarked images on RunPod/CUDA using
 ROBIN's *released, adversarially optimized* SD2.1-base watermark checkpoint
-(optimized_r5_15_step10.pt), replacing the earlier SD1.5 no-training variant.
+(optimized_r5_15_step10.pt), replacing our earlier SD1.5 no-training variant.
 
 Both images of a pair share the exact same initial latents (set_random_seed(i
 + gen_seed) -> pipe.get_random_latents()), matching ROBIN's own generation
-convention (verified against robin_official/_gen_clean_pair.py). Watermark is
-injected at step 35 of 50 via the ROBINStableDiffusionPipeline 3-way pass.
+convention (we verified this against robin_official/_gen_clean_pair.py). We inject
+the watermark at step 35 of 50 via the ROBINStableDiffusionPipeline 3-way pass.
 
-GPU memory batching (RTX 4090, 24 GB): images are generated in mini-batches of
+GPU memory batching (RTX 4090, 24 GB): we generate images in mini-batches of
 --batch_size prompts per pipe() call (2 calls per batch: one clean, one
 watermarked), instead of one call per image. This amortizes fixed kernel-launch
-/ text-encoder overhead across the batch, the same strategy already used by
-03_score_attacks_cuda.py (batch_size=34) for the scoring stage. Start with
---batch_size 16 and reduce (8/4/1) if you hit CUDA OOM; increase toward 24-32
-if headroom remains (watch nvidia-smi).
+/ text-encoder overhead across the batch, the same strategy we already use in
+03_score_attacks_cuda.py (batch_size=34) for the scoring stage. We start with
+--batch_size 16 and reduce (8/4/1) if we hit CUDA OOM; we increase toward 24-32
+if headroom remains (watching nvidia-smi).
 
-IMPORTANT: run a small smoke test first (--start 0 --end 4 --batch_size 4)
+IMPORTANT: we run a small smoke test first (--start 0 --end 4 --batch_size 4)
 and visually check the saved images before launching the full 1000-image run,
 since batch>1 requires expanding gt_patch/opt_acond to the batch dimension
 (not exercised by ROBIN's original single-image code path).
@@ -57,7 +57,7 @@ def load_prompts(path: Path) -> list[str]:
 
 
 def build_args_ns(a: argparse.Namespace) -> argparse.Namespace:
-    """Namespace consumed by get_watermarking_mask (mirrors ROBIN's own args)."""
+    """We build the namespace that get_watermarking_mask consumes (mirrors ROBIN's own args)."""
     return argparse.Namespace(
         w_mask_shape="circle", w_channel=a.w_channel,
         w_up_radius=a.w_up_radius, w_low_radius=a.w_low_radius,
@@ -67,7 +67,7 @@ def build_args_ns(a: argparse.Namespace) -> argparse.Namespace:
 
 
 def is_black(img: Image.Image, mean_thr: float = 2.0, std_thr: float = 1.0) -> bool:
-    """Same criterion as robin_official/detect_black_images.py."""
+    """We use the same criterion as robin_official/detect_black_images.py."""
     arr = np.asarray(img.convert("RGB"), dtype=np.float32)
     return bool(arr.mean() < mean_thr and arr.std() < std_thr)
 
@@ -78,7 +78,7 @@ def log(msg: str) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    # stabilityai/stable-diffusion-2-1-base is gated (HTTP 401); this is the open mirror.
+    # stabilityai/stable-diffusion-2-1-base is gated (HTTP 401); we use this open mirror.
     ap.add_argument("--model_id", default="sd2-community/stable-diffusion-2-1-base")
     ap.add_argument("--wm_path", default=str(
         Path(__file__).resolve().parents[2] / "robin_official" / "ckpts" / "optimized_r5_15_step10.pt"))
@@ -118,7 +118,7 @@ def main() -> None:
         args.model_id, scheduler=scheduler, torch_dtype=torch.float16,
         safety_checker=None,
     ).to(device)
-    # VAE decodes one latent at a time; batched 512x512 decode OOMs on 24GB.
+    # we make the VAE decode one latent at a time; batched 512x512 decode OOMs on 24GB.
     pipe.enable_vae_slicing()
     log(f"model={args.model_id} wm_path={args.wm_path} device={device} "
         f"dtype=fp16 steps={args.num_inference_steps} wm_step={args.watermarking_steps}")
@@ -156,7 +156,7 @@ def main() -> None:
         ).images
 
     def repair_black(images, idxs, watermarked: bool, tag: str) -> list[int]:
-        """Re-generate any black frame on its own; return indices still black."""
+        """We re-generate any black frame on its own and return indices still black."""
         bad = [n for n, im in enumerate(images) if is_black(im)]
         if not bad:
             return []

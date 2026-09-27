@@ -1,10 +1,10 @@
 """
 scripts_p3/20_s1_e2_resplit.py
 
-Reviewer-2 S1 follow-up for E2: the prompt partition (split_seed=42) is shared by all
-generation seeds. Re-draw R random shared 50/50 prompt partitions, recompute the M3
+We follow up the split check for E2: our prompt partition (split_seed=42) is shared by all
+generation seeds. We re-draw R random shared 50/50 prompt partitions, recompute the M3
 threshold on non-watermarked `none` calibration scores per seed, and evaluate the
-non-watermarked test FPR under every evaluation condition. Reports, per condition and
+non-watermarked test FPR under every evaluation condition. We report, per condition and
 alpha, where the split_seed=42 result lies in the re-split distribution, and the
 re-split distribution of the within-budget count over the 85 condition-seed observations.
 """
@@ -48,7 +48,7 @@ def main():
     ks = {al: ceil((n_cal + 1) * (1 - al)) for al in ALPHAS}
 
     def fpr_matrix(ci, ti):
-        """-> dict alpha -> array [len(attacks), len(seeds)] of test FPR."""
+        """We return a dict alpha -> array [len(attacks), len(seeds)] of test FPR."""
         res = {al: np.empty((len(attacks), len(seeds))) for al in ALPHAS}
         for j, s in enumerate(seeds):
             cal_sorted = np.sort(score[s]["none"][ci])
@@ -59,7 +59,7 @@ def main():
                     res[al][i, j] = np.mean(score[s][a][ti] > tau)
         return res
 
-    # pipeline partition, read from the stored split so it matches 05_make_splits.py exactly
+    # our pipeline partition; we read it from the stored split so it matches 05_make_splits.py exactly
     cal_split = pd.read_csv(args.root / "splits" / "cal_clean.csv")
     cal_ids = set(cal_split[(cal_split.attack_id == "none") & (cal_split.seed == seeds[0])]
                   .prompt_id.astype(int))

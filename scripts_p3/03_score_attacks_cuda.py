@@ -1,42 +1,41 @@
 """
 scripts_p3/03_score_attacks_cuda.py  (CUDA backend, external GPU)
 
-Phase 2 scoring, identical contract to 03_score_attacks.py (OpenVINO backend),
+We score with the identical contract as 03_score_attacks.py (OpenVINO backend),
 for use on a machine with a real CUDA GPU (much faster than Intel Arc/OpenVINO
-for the 170,000 DDIM-inversion workload of the full 5-seed x 1000-image x
+for the 170,000 DDIM-inversion workload of our full 5-seed x 1000-image x
 17-attack scoring pass).
 
-Target environment: RunPod (external GPU hosting), CUDA 12.1. No CUDA-version
+Our target environment: RunPod (external GPU hosting), CUDA 12.1. No CUDA-version
 record exists for the original robin_official/package.txt stack (torch==
-1.13.0+cu117 / diffusers==0.11.1); that stack is NOT required here. A prior
-run of this exact codebase (inverse_stable_diffusion.py, unmodified) on a
-newer stack — Python 3.12 + a post-0.11.1 diffusers, see
-PAPER4_IEEE_ACCESS(완료)/server_backup/logs/gate16/run.log — completed
+1.13.0+cu117 / diffusers==0.11.1); we do NOT require that stack here. We
+previously ran this exact codebase (inverse_stable_diffusion.py, unmodified) on a
+newer stack — Python 3.12 + a post-0.11.1 diffusers — and the run completed
 successfully, only emitting harmless FutureWarnings (`unet.in_channels` and
-`_encode_prompt()` deprecations). So a modern CUDA-12.1 torch/diffusers pair
-is expected to work without code changes.
+`_encode_prompt()` deprecations). So we expect a modern CUDA-12.1 torch/diffusers
+pair to work without code changes.
 
-RunPod setup:
-    1. Launch a pod: a "CUDA 12.1"-tagged PyTorch template, RTX 4090 GPU
+Our RunPod setup:
+    1. We launch a pod: a "CUDA 12.1"-tagged PyTorch template, RTX 4090 GPU
        (widely available; RTX 5090 may not yet be a listed RunPod SKU —
-       check availability), >=20GB container disk.
-    2. Transfer data with runpodctl (no need for a network volume for a
+       we check availability), >=20GB container disk.
+    2. We transfer data with runpodctl (we need no network volume for a
        one-off run):
            local: runpodctl send outputs_p3/clean outputs_p3/watermarked \
                       outputs_p3/manifests robin_official scripts_p3
            pod:   runpodctl receive <code>
-    3. On the pod: bash scripts_p3/runpod_setup.sh
+    3. On the pod we run: bash scripts_p3/runpod_setup.sh
     4. python scripts_p3/03_score_attacks_cuda.py --gen_seed 0 --start 0 --end 1000
-    5. Copy results back:
+    5. We copy results back:
            pod:   runpodctl send outputs_p3/scores
            local: runpodctl receive <code>
-       then run 04_parse_score_dump.py locally.
+       then we run 04_parse_score_dump.py locally.
 
-Reads:  outputs_p3/clean/seed_{N}/ori-lg7.5-{i}.jpg
-        outputs_p3/watermarked/seed_{N}/wm-lg7.5-{i}.jpg
-        outputs_p3/manifests/attack_manifest.json
-Writes: outputs_p3/scores/seed_{N}/<attack_id>/scores.json
-        (consumed by 04_parse_score_dump.py; identical format regardless of backend)
+We read:  outputs_p3/clean/seed_{N}/ori-lg7.5-{i}.jpg
+          outputs_p3/watermarked/seed_{N}/wm-lg7.5-{i}.jpg
+          outputs_p3/manifests/attack_manifest.json
+We write: outputs_p3/scores/seed_{N}/<attack_id>/scores.json
+          (04_parse_score_dump.py consumes it; the format is identical regardless of backend)
 """
 from __future__ import annotations
 
@@ -47,8 +46,8 @@ from pathlib import Path
 
 import torch
 
-# robin_official is a sibling of the PAPER3 repo root on both Windows (F:/RCE/robin_official)
-# and the RunPod pod (/workspace/robin_official) — resolve relative to this file so the
+# We keep robin_official as a sibling of the PAPER3 repo root on both Windows (F:/RCE/robin_official)
+# and the RunPod pod (/workspace/robin_official); we resolve it relative to this file so our
 # script works unmodified on either machine.
 _ROBIN_DIR = str(Path(__file__).resolve().parents[2] / "robin_official")
 sys.path.insert(0, _ROBIN_DIR)
@@ -61,8 +60,8 @@ from _attack_scoring_common import run_scoring_loop, WmArgs  # noqa: E402
 
 
 class CudaRobinPipe:
-    """Thin adapter around InversableStableDiffusionPipeline matching the
-    OVRobinPipe surface used by _attack_scoring_common.run_scoring_loop.
+    """We wrap InversableStableDiffusionPipeline in this thin adapter to match the
+    OVRobinPipe surface that _attack_scoring_common.run_scoring_loop uses.
     """
 
     def __init__(self, model_id: str, device: str = "cuda", revision: str | None = None,
@@ -113,10 +112,10 @@ def main():
     ap.add_argument("--out_dir", type=Path, default=None)
     ap.add_argument("--steps", type=int, default=35)
     ap.add_argument("--num_inference_steps", type=int, default=50)
-    # stabilityai/stable-diffusion-2-1-base is gated (HTTP 401); this is the open mirror.
+    # stabilityai/stable-diffusion-2-1-base is gated (HTTP 401); we use this open mirror.
     ap.add_argument("--model_id", default="sd2-community/stable-diffusion-2-1-base")
     ap.add_argument("--revision", default=None)
-    # the mirror has no fp16 branch; fp16 comes from torch_dtype, not from this.
+    # the mirror has no fp16 branch; we get fp16 from torch_dtype, not from this.
     ap.add_argument("--variant", default=None)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--checkpoint_every", type=int, default=10)
@@ -128,7 +127,7 @@ def main():
     if not torch.cuda.is_available() and args.device == "cuda":
         raise SystemExit("[03-cuda] CUDA not available on this machine; pass --device cpu to force CPU (slow).")
 
-    # paper3.md invariant: cudnn.deterministic=True, cudnn.benchmark=False
+    # We always keep cudnn.deterministic=True, cudnn.benchmark=False
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 

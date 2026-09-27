@@ -1,6 +1,6 @@
 """
 scripts_p3/_common.py
-Shared helpers used by the E1-E5 evaluation scripts (07-11).
+Shared helpers we use in the E1-E5 evaluation scripts (07-11).
 """
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ import pandas as pd
 
 
 def conformal_quantile(scores: np.ndarray, alpha: float) -> float:
-    """Split-conformal threshold: order statistic z_(k), k = ceil((n+1)(1-alpha)).
+    """We compute the split-conformal threshold: order statistic z_(k), k = ceil((n+1)(1-alpha)).
 
-    Returns +inf when k > n, i.e. when n is too small to certify the level.
+    We return +inf when k > n, i.e. when n is too small to certify the level.
     """
     s = np.sort(np.asarray(scores, dtype=float))
     n = len(s)
@@ -50,7 +50,7 @@ def wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
 
 
 def roc_auc(neg: np.ndarray, pos: np.ndarray) -> float:
-    """Mann-Whitney AUC: P(score(pos) > score(neg))."""
+    """We compute the Mann-Whitney AUC: P(score(pos) > score(neg))."""
     if len(neg) == 0 or len(pos) == 0:
         return float("nan")
     s = np.concatenate([neg, pos])
@@ -75,8 +75,8 @@ def threshold_for(thresholds: pd.DataFrame, method: str, alpha: float, gen_seed=
     if gen_seed is None and sub["gen_seed"].nunique() > 1:
         raise ValueError(
             f"threshold_for({method}, alpha={alpha}) matched {sub['gen_seed'].nunique()} "
-            "distinct gen_seed rows; pass gen_seed= explicitly (paper3.md \u00a76.5: "
-            "thresholds are per-seed, never pooled).")
+            "distinct gen_seed rows; pass gen_seed= explicitly (we compute thresholds "
+            "per seed and never pool them).")
     return float(sub.iloc[0]["threshold"])
 
 
@@ -86,12 +86,12 @@ def mcnemar_test(
     tau_a: float,
     tau_b: float,
 ) -> tuple[int, int, float, float]:
-    """Paired McNemar test on binary decisions of two thresholds A and B over
-    the same items. Returns (b, c, chi2, p_value) where:
+    """We run a paired McNemar test on binary decisions of two thresholds A and B over
+    the same items. We return (b, c, chi2, p_value) where:
         b = # items where A correct and B wrong
         c = # items where A wrong   and B correct
-    Reports the continuity-corrected statistic ((|b - c| - 1)^2) / (b + c) and the
-    exact two-sided binomial McNemar p-value. If b + c < 1, returns (b, c, nan, nan).
+    We report the continuity-corrected statistic ((|b - c| - 1)^2) / (b + c) and the
+    exact two-sided binomial McNemar p-value. If b + c < 1, we return (b, c, nan, nan).
     """
     if len(scores) != len(labels) or len(scores) == 0:
         return (0, 0, float("nan"), float("nan"))

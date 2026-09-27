@@ -1,10 +1,10 @@
 """
 scripts_p3/22_treering_pilot_check.py  (local)
 
-Checks a Tree-Ring scoring CSV downloaded from the pod:
-  1. robin_distance (label 0) vs the main run's scores_raw.csv -> same inversion?
+We check a Tree-Ring scoring CSV that we download from the pod:
+  1. robin_distance (label 0) vs our main run's scores_raw.csv -> same inversion?
   2. Tree-Ring separation on the unmodified condition (clean vs Tree-Ring image).
-Writes sd21_results/outputs_p3/treering/pilot_check.txt (UTF-8).
+We write sd21_results/outputs_p3/treering/pilot_check.txt (UTF-8).
 
 Usage:
     F:\\RCE\\venv_p3\\Scripts\\python.exe scripts_p3/22_treering_pilot_check.py \\
@@ -46,7 +46,7 @@ def main() -> None:
     lines.append(f"\n[2] Tree-Ring distance, none: clean n={len(c)} mean={c.mean():.3f} "
                  f"[min {c.min():.3f}, max {c.max():.3f}]")
     lines.append(f"    Tree-Ring image n={len(w)} mean={w.mean():.3f} [min {w.min():.3f}, max {w.max():.3f}]")
-    # AUC with score = -distance (Mann-Whitney, ties counted 1/2)
+    # we compute AUC with score = -distance (Mann-Whitney, ties counted 1/2)
     sc, sw = -c.to_numpy()[:, None], -w.to_numpy()[None, :]
     auc = float(np.mean((sw > sc) + 0.5 * (sw == sc)))
     lines.append(f"    AUC(none) = {auc:.4f}")

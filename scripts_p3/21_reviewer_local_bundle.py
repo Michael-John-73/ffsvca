@@ -1,19 +1,19 @@
 """
 scripts_p3/21_reviewer_local_bundle.py
 
-Local analyses requested in the reviewer response plan (stored SD2.1 scores, stored split):
-  S2  KS distance between the non-watermarked score distributions under `none` and under
+We run these local analyses on our stored SD2.1 scores and stored split:
+  S2  We compute the KS distance between the non-watermarked score distributions under `none` and under
       each condition (a lower bound on the total-variation distance of Definition 3), and
       the empirical FPR shift at the M3 threshold.
-  S3  Multiplicity: one-sided exact binomial p-values for H0: r_a(c) <= alpha per
+  S3  Multiplicity: we compute one-sided exact binomial p-values for H0: r_a(c) <= alpha per
       condition-seed (conditional on the realized calibration set, Remark 1), with Holm
-      and Benjamini-Hochberg across the 85 observations; pooled-over-seeds tests per
+      and Benjamini-Hochberg across the 85 observations; we also run pooled-over-seeds tests per
       condition with Holm across the 17 conditions.
-  S6  Power of the one-sided exact binomial test (level 0.05) and of the rule
+  S6  We compute the power of the one-sided exact binomial test (level 0.05) and of the rule
       "empirical FPR > alpha" to detect true FPRs above the budget, for m=500 and m=2500.
-  M4  Augmented calibration: conformal threshold on the union of non-watermarked
+  M4  Augmented calibration: we compute the conformal threshold on the union of non-watermarked
       calibration scores of all 17 conditions.
-  M5  Alternative same-objective rules: (a) calibration-conditional (PAC) threshold with
+  M5  We evaluate alternative same-objective rules: (a) calibration-conditional (PAC) threshold with
       P(r(C) <= alpha) >= 1-delta, delta=0.1; (b) condition-wise oracle calibration.
 """
 from __future__ import annotations
@@ -37,7 +37,7 @@ def conformal_tau(cal: np.ndarray, alpha: float) -> float:
 
 
 def pac_tau(cal: np.ndarray, alpha: float, delta: float) -> float:
-    """Smallest order statistic z_(k) with P(r(C) <= alpha) >= 1-delta, r ~ Beta(n-k+1, k)."""
+    """We return the smallest order statistic z_(k) with P(r(C) <= alpha) >= 1-delta, r ~ Beta(n-k+1, k)."""
     n = len(cal)
     s = np.sort(cal)
     for k in range(1, n + 1):
