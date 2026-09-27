@@ -74,7 +74,7 @@ pip install -r requirements.txt --extra-index-url https://download.pytorch.org/w
 
 We need the ROBIN code (`robin_official/`, with `optim_utils.py` and `inverse_stable_diffusion.py`) and its
 released checkpoint, which we do not redistribute; our scripts expect `robin_official/` next to this
-repository. On RunPod we install the pinned stack with `scripts_p3/runpod_setup.sh`.
+repository.
 
 ## 4. Images: how we generated them and what we used
 
@@ -95,7 +95,7 @@ We do not upload the image sets; we regenerate them with the scripts below.
 scripts_p3/                 our experiment scripts (run from the repository root)
 outputs_p3/manifests/       17-condition attack manifest
 outputs_p3/prompts/         prompt list
-outputs_p3/metrics/         per-experiment metric CSV/TXT (E1–E8, re-split and reviewer analyses)
+outputs_p3/metrics/         per-experiment metric CSV/TXT (E1–E8, re-split, KS and multiplicity analyses)
 outputs_p3/tables/          paper tables as CSV
 outputs_p3/treering/metrics Tree-Ring comparator (E10)
 outputs_p3_appd/            DWT-DCT-SVD comparator (E9)
@@ -115,9 +115,9 @@ outputs_p3/figures/         paper figures (PDF + PNG)
 | E7 MS-COCO real images | `score_coco_real.py`, `08c_eval_coco_real_fpr.py` | `metrics/e7_coco_real_fpr.csv` |
 | E8 img2img regeneration | `score_adaptive_regen.py`, `08d_eval_adaptive_regen.py` | `metrics/e8_adaptive_regen.csv` |
 | E9 DWT-DCT-SVD | `score_dwtdctsvd.py`, `08e_eval_dwtdctsvd_comparator.py` | `outputs_p3_appd/` |
-| E10 Tree-Ring | `gen_treering_cuda.py`, `score_treering_cuda.py`, `run_treering_b2.sh`, `22_…`, `23_treering_fpr.py`, `24_treering_table.py` | `treering/metrics/` |
+| E10 Tree-Ring | `gen_treering_cuda.py`, `score_treering_cuda.py`, `22_treering_pilot_check.py` (ROBIN reproduction check), `23_treering_fpr.py` | `treering/metrics/` |
 | Bootstrap CIs | `12_compute_ci.py` | `metrics/ci_bootstrap.csv` |
-| Re-split / reviewer analyses | `19_s1_split_check.py`, `20_s1_e2_resplit.py`, `21_reviewer_local_bundle.py` | `metrics/s1_*`, `metrics/reviewer_local_bundle*` |
+| Re-split, KS and multiplicity analyses | `19_s1_split_check.py`, `20_s1_e2_resplit.py`, `21_reviewer_local_bundle.py` | `metrics/s1_*`, `metrics/reviewer_local_bundle*` |
 | Tables / figures / checks | `15_make_paper_tables.py`, `16_make_paper_figures.py`, `25_make_flow_figure.py`, `17_run_quality_checks.py` | `tables/`, `figures/` |
 
 We do not include the image sets (Section 4), the raw score dumps (`scores_raw.csv`) or `final_summary.csv`

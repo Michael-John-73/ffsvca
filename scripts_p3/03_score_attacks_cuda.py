@@ -24,7 +24,7 @@ Our RunPod setup:
            local: runpodctl send outputs_p3/clean outputs_p3/watermarked \
                       outputs_p3/manifests robin_official scripts_p3
            pod:   runpodctl receive <code>
-    3. On the pod we run: bash scripts_p3/runpod_setup.sh
+    3. On the pod we install requirements.txt (torch 2.3.1, CUDA 12.1 wheels).
     4. python scripts_p3/03_score_attacks_cuda.py --gen_seed 0 --start 0 --end 1000
     5. We copy results back:
            pod:   runpodctl send outputs_p3/scores
