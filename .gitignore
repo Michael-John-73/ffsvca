@@ -3,6 +3,4 @@ __pycache__/
 outputs_p3/clean/
 outputs_p3/watermarked/
 outputs_p3/attacks/
-outputs_p3/scores/
-outputs_p3/splits/
 outputs_p3/thresholds/

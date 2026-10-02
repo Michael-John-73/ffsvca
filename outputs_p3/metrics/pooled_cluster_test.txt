@@ -1,0 +1,31 @@
+seeds=[0, 1, 2, 3, 4] conditions=17 cal prompts=500 test prompts=500 (same partition in every seed: True)
+
+alpha=0.01: exceedances 21/85; unadjusted p<=.05: 8; Holm: 1; BH: 1
+     condition  X  fpr_pooled  p_indep  holm_indep  p_cluster_z  holm_cluster_z  p_cluster_boot  holm_cluster_boot  deff  rho_fp
+blurring+noise 39      0.0156  0.00547       False       0.0175           False          0.0238              False  1.15   0.024
+      jpeg_q30 26      0.0104    0.447       False        0.442           False           0.444              False  1.82   0.185
+    noise_s003 33      0.0132   0.0705       False        0.111           False             0.1              False  1.32  0.0593
+    noise_s005 33      0.0132   0.0705       False        0.105           False           0.109              False  1.26  0.0419
+    noise_s008 32      0.0128    0.099       False        0.122           False           0.133              False  1.14  0.0198
+
+alpha=0.05: exceedances 18/85; unadjusted p<=.05: 7; Holm: 0; BH: 0
+     condition   X  fpr_pooled  p_indep  holm_indep  p_cluster_z  holm_cluster_z  p_cluster_boot  holm_cluster_boot  deff  rho_fp
+blurring+noise 169      0.0676 6.87e-05        True      0.00504           False         0.00605              False  1.86   0.214
+    noise_s003 133      0.0532    0.243       False        0.296           False           0.293              False  1.76   0.188
+    noise_s005 158      0.0632  0.00196        True       0.0244           False          0.0286              False   1.9   0.222
+    noise_s008 152      0.0608  0.00889       False        0.049           False          0.0534              False  1.87   0.216
+
+alpha=0.1: exceedances 21/85; unadjusted p<=.05: 13; Holm: 2; BH: 7
+     condition   X  fpr_pooled  p_indep  holm_indep  p_cluster_z  holm_cluster_z  p_cluster_boot  holm_cluster_boot  deff  rho_fp
+blurring+noise 331       0.132 1.31e-07        True     0.000566            True           0.001               True  2.16   0.291
+    noise_s003 290       0.116  0.00488       False       0.0465           False            0.05              False  2.21   0.305
+    noise_s005 318       0.127 6.91e-06        True      0.00305            True          0.0042              False  2.22   0.306
+    noise_s008 325        0.13 8.76e-07        True      0.00162            True         0.00245               True   2.3   0.324
+
+== E7 COCO (seed-0 thresholds)
+alpha=0.01 none     : FPR=0.0030 (3/1000)
+alpha=0.01 jpeg_q50 : FPR=0.0020 (2/1000)
+alpha=0.05 none     : FPR=0.0080 (8/1000)
+alpha=0.05 jpeg_q50 : FPR=0.0050 (5/1000)
+alpha=0.1 none     : FPR=0.0290 (29/1000)
+alpha=0.1 jpeg_q50 : FPR=0.0110 (11/1000)
