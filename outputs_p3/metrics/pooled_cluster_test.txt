@@ -1,26 +1,26 @@
 seeds=[0, 1, 2, 3, 4] conditions=17 cal prompts=500 test prompts=500 (same partition in every seed: True)
 
-alpha=0.01: exceedances 21/85; unadjusted p<=.05: 8; Holm: 1; BH: 1
-     condition  X  fpr_pooled  p_indep  holm_indep  p_cluster_z  holm_cluster_z  p_cluster_boot  holm_cluster_boot  deff  rho_fp
-blurring+noise 39      0.0156  0.00547       False       0.0175           False          0.0238              False  1.15   0.024
-      jpeg_q30 26      0.0104    0.447       False        0.442           False           0.444              False  1.82   0.185
-    noise_s003 33      0.0132   0.0705       False        0.111           False             0.1              False  1.32  0.0593
-    noise_s005 33      0.0132   0.0705       False        0.105           False           0.109              False  1.26  0.0419
-    noise_s008 32      0.0128    0.099       False        0.122           False           0.133              False  1.14  0.0198
+alpha=0.01: exceedances 21/85; unadjusted p<=.05: 8; Holm: 1; BH: 1; 85-observation family: min raw p=4.601e-06, min Holm-adjusted p=0.0003911
+     condition  X  fpr_pooled  p_indep  holm_indep  p_cluster_z  p_cluster_z_holm_adj  holm_cluster_z  p_cluster_boot  p_cluster_boot_holm_adj  holm_cluster_boot  deff  rho_fp
+blurring+noise 39      0.0156  0.00547       False      0.01745                0.2967           False          0.0238                   0.4046              False 1.147 0.02397
+      jpeg_q30 26      0.0104   0.4471       False       0.4419                     1           False          0.4445                        1              False 1.817  0.1849
+    noise_s003 33      0.0132  0.07045       False        0.111                     1           False             0.1                        1              False 1.318 0.05927
+    noise_s005 33      0.0132  0.07045       False       0.1055                     1           False          0.1093                        1              False 1.256 0.04189
+    noise_s008 32      0.0128  0.09896       False       0.1218                     1           False          0.1326                        1              False  1.14 0.01981
 
-alpha=0.05: exceedances 18/85; unadjusted p<=.05: 7; Holm: 0; BH: 0
-     condition   X  fpr_pooled  p_indep  holm_indep  p_cluster_z  holm_cluster_z  p_cluster_boot  holm_cluster_boot  deff  rho_fp
-blurring+noise 169      0.0676 6.87e-05        True      0.00504           False         0.00605              False  1.86   0.214
-    noise_s003 133      0.0532    0.243       False        0.296           False           0.293              False  1.76   0.188
-    noise_s005 158      0.0632  0.00196        True       0.0244           False          0.0286              False   1.9   0.222
-    noise_s008 152      0.0608  0.00889       False        0.049           False          0.0534              False  1.87   0.216
+alpha=0.05: exceedances 18/85; unadjusted p<=.05: 7; Holm: 0; BH: 0; 85-observation family: min raw p=0.01242, min Holm-adjusted p=1
+     condition   X  fpr_pooled   p_indep  holm_indep  p_cluster_z  p_cluster_z_holm_adj  holm_cluster_z  p_cluster_boot  p_cluster_boot_holm_adj  holm_cluster_boot  deff  rho_fp
+blurring+noise 169      0.0676 6.875e-05        True     0.005043               0.08573           False         0.00605                   0.1028              False 1.856  0.2139
+    noise_s003 133      0.0532    0.2434       False       0.2957                     1           False          0.2928                        1              False 1.763  0.1882
+    noise_s005 158      0.0632  0.001958        True      0.02442                0.3908           False         0.02865                   0.4584              False 1.896  0.2225
+    noise_s008 152      0.0608  0.008889       False      0.04902                0.7352           False         0.05345                   0.8017              False 1.866  0.2162
 
-alpha=0.1: exceedances 21/85; unadjusted p<=.05: 13; Holm: 2; BH: 7
-     condition   X  fpr_pooled  p_indep  holm_indep  p_cluster_z  holm_cluster_z  p_cluster_boot  holm_cluster_boot  deff  rho_fp
-blurring+noise 331       0.132 1.31e-07        True     0.000566            True           0.001               True  2.16   0.291
-    noise_s003 290       0.116  0.00488       False       0.0465           False            0.05              False  2.21   0.305
-    noise_s005 318       0.127 6.91e-06        True      0.00305            True          0.0042              False  2.22   0.306
-    noise_s008 325        0.13 8.76e-07        True      0.00162            True         0.00245               True   2.3   0.324
+alpha=0.1: exceedances 21/85; unadjusted p<=.05: 13; Holm: 2; BH: 7; 85-observation family: min raw p=0.0002804, min Holm-adjusted p=0.02384
+     condition   X  fpr_pooled   p_indep  holm_indep  p_cluster_z  p_cluster_z_holm_adj  holm_cluster_z  p_cluster_boot  p_cluster_boot_holm_adj  holm_cluster_boot  deff  rho_fp
+blurring+noise 331      0.1324 1.307e-07        True    0.0005662              0.009626            True           0.001                    0.017               True 2.156  0.2911
+    noise_s003 290       0.116   0.00488       False      0.04648                0.6508           False            0.05                      0.7              False 2.211  0.3055
+    noise_s005 318      0.1272 6.907e-06        True     0.003053               0.04579            True          0.0042                    0.063              False 2.216  0.3064
+    noise_s008 325        0.13 8.758e-07        True     0.001621               0.02593            True         0.00245                   0.0392               True 2.295  0.3242
 
 == E7 COCO (seed-0 thresholds)
 alpha=0.01 none     : FPR=0.0030 (3/1000)

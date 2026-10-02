@@ -39,6 +39,14 @@ def holm(p: np.ndarray, level: float = 0.05) -> np.ndarray:
     return rej
 
 
+def holm_adjust(p: np.ndarray) -> np.ndarray:
+    order = np.argsort(p)
+    adj = np.maximum.accumulate(p[order] * (len(p) - np.arange(len(p))))
+    out = np.empty(len(p))
+    out[order] = np.minimum(adj, 1.0)
+    return out
+
+
 def bh(p: np.ndarray, q: float = 0.05) -> np.ndarray:
     order = np.argsort(p)
     ok = p[order] <= q * np.arange(1, len(p) + 1) / len(p)
@@ -109,14 +117,18 @@ def main():
                              deff=deff, rho_fp=rho))
         obs_p = np.array(obs_p)
         log(f"\nalpha={al}: exceedances {n_exc}/85; unadjusted p<=.05: {int((obs_p <= .05).sum())}; "
-            f"Holm: {int(holm(obs_p).sum())}; BH: {int(bh(obs_p).sum())}")
+            f"Holm: {int(holm(obs_p).sum())}; BH: {int(bh(obs_p).sum())}; "
+            f"85-observation family: min raw p={obs_p.min():.4g}, min Holm-adjusted p={holm_adjust(obs_p).min():.4g}")
         df = pd.DataFrame(rows)
         df["holm_indep"] = holm(df.p_indep.to_numpy())
         df["holm_cluster_z"] = holm(df.p_cluster_z.to_numpy())
         df["holm_cluster_boot"] = holm(df.p_cluster_boot.to_numpy())
+        for c in ("p_indep", "p_cluster_z", "p_cluster_boot"):
+            df[f"{c}_holm_adj"] = holm_adjust(df[c].to_numpy())
         show = df[(df.fpr_pooled > al) | df.holm_indep]
-        log(show[["condition", "X", "fpr_pooled", "p_indep", "holm_indep", "p_cluster_z", "holm_cluster_z",
-                  "p_cluster_boot", "holm_cluster_boot", "deff", "rho_fp"]].to_string(index=False, float_format=lambda v: f"{v:.3g}"))
+        log(show[["condition", "X", "fpr_pooled", "p_indep", "holm_indep", "p_cluster_z", "p_cluster_z_holm_adj",
+                  "holm_cluster_z", "p_cluster_boot", "p_cluster_boot_holm_adj", "holm_cluster_boot", "deff",
+                  "rho_fp"]].to_string(index=False, float_format=lambda v: f"{v:.4g}"))
         df.to_csv(ROOT / "metrics" / f"pooled_cluster_test_alpha{al}.csv", index=False)
 
     coco = pd.read_csv(ROOT / "scores" / "coco_real_scores.csv")
