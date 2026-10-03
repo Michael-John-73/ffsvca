@@ -118,7 +118,7 @@ outputs_p3/figures/         paper figures (PDF + PNG)
 | E4 calibration size | `10_eval_e4_calibration_size.py` | `metrics/e4_calibration_size.csv` |
 | E5 failure conditions | `11_eval_failure_conditions.py` | `metrics/e5_failure_conditions.csv` |
 | E7 MS-COCO real images | `score_coco_real.py`, `08c_eval_coco_real_fpr.py` | `metrics/e7_coco_real_fpr.csv` |
-| E8 img2img regeneration | `score_adaptive_regen.py`, `08d_eval_adaptive_regen.py` (all 200 sources), `28_e8_test_sources.py` (the 94 sources outside the seed-0 calibration half, reported in the paper; Figure 6) | `metrics/e8_adaptive_regen.csv`, `metrics/e8_adaptive_regen_test_sources.*` |
+| E8 img2img regeneration | `score_adaptive_regen.py`, `08d_eval_adaptive_regen.py` (all 200 sources), `28_e8_test_sources.py` (the 94 sources outside the seed-0 calibration half, reported in the paper; Figure 7) | `metrics/e8_adaptive_regen.csv`, `metrics/e8_adaptive_regen_test_sources.*` |
 | E9 DWT-DCT-SVD | `score_dwtdctsvd.py`, `08e_eval_dwtdctsvd_comparator.py` | `outputs_p3_appd/` |
 | E10 Tree-Ring | `gen_treering_cuda.py`, `score_treering_cuda.py`, `22_treering_pilot_check.py` (ROBIN reproduction check), `23_treering_fpr.py` | `treering/metrics/` |
 | Bootstrap CIs | `12_compute_ci.py` | `metrics/ci_bootstrap.csv` |
