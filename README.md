@@ -166,9 +166,13 @@ FPR averaged 0.00996 / 0.0498 / 0.0998, matching the split-conformal value 1 −
 
 - We found 67 of 85 condition–seed observations within budget; all 18 observed exceedances occurred under
   additive noise at σ ≥ 0.03 or `blurring+noise`. We treat them as point-estimate exceedances: 7 of the 18
-  have an unadjusted one-sided exact binomial p ≤ 0.05 and none survives Holm/BH adjustment; pooled over seeds
-  (approximate), the exceedance is Holm-significant for `blurring+noise` and `noise_s005`. Over 1,000
-  re-drawn partitions the four noise-related exceedances recurred in 96.3–99.9 % of cases.
+  have an unadjusted one-sided exact binomial p ≤ 0.05 and none survives Holm/BH adjustment over the 85
+  condition–seed tests. Because the five seeds share one prompt partition, we pool over seeds with the test
+  prompt as the unit (cluster-robust one-sided z test; prompt bootstrap as a sensitivity check; Holm over the
+  17 conditions at significance level 0.05): at α = 0.05 no pooled exceedance is significant (z test:
+  `blurring+noise` raw p = 0.0050, Holm-adjusted 0.086; `noise_s005` 0.024, 0.39), see
+  `metrics/pooled_cluster_test*`. Over 1,000 re-drawn partitions of the stored scores the four noise-related
+  exceedances recurred in 96.3–99.9 % of the re-splits.
 - We observed that rotation and cropping-containing processing reduced TPR while the observed FPR stayed low.
 
 ![FPR per condition](outputs_p3/figures/fig1_fpr_per_attack_alpha0.png)
@@ -210,17 +214,22 @@ for seeds 0–4).
 
 *Figure 6 — We show the empirical FPR of M3 on MS-COCO at α = 0.05 with its Wilson interval.*
 
-### E8 — img2img regeneration stress test (200 images per cell, seed 0)
+### E8 — img2img regeneration stress test (94 sources outside the seed-0 calibration half, seed 0)
 
-| Strength | TPR (95 % CI) | FPR (95 % CI) | FPR − α |
+Of the 200 regenerated sources, 106 lie in the calibration half of the seed-0 partition, whose unmodified
+non-watermarked images set the M3 threshold; we therefore report the 94 test-half sources only, with the
+unchanged seed-0 threshold (`28_e8_test_sources.py`). Counts are detections out of 94.
+
+| Strength | TPR (count; 95 % CI) | FPR (count; 95 % CI) | FPR − α |
 |---|---|---|---|
-| 0.2 | 0.930 (0.886–0.958) | 0.070 (0.042–0.114) | +0.020 |
-| 0.3 | 0.780 (0.718–0.832) | 0.070 (0.042–0.114) | +0.020 |
-| 0.5 | 0.345 (0.283–0.413) | 0.090 (0.058–0.138) | +0.040 |
+| 0.2 | 0.904 (85; 0.828–0.949) | 0.074 (7; 0.037–0.146) | +0.024 |
+| 0.3 | 0.787 (74; 0.694–0.858) | 0.085 (8; 0.044–0.159) | +0.035 |
+| 0.5 | 0.362 (34; 0.272–0.462) | 0.096 (9; 0.051–0.172) | +0.046 |
 
 ![Regeneration](outputs_p3/figures/fig6_adaptive_regen_alpha0.png)
 
-*Figure 7 — We plot TPR and FPR of M3 versus regeneration strength.*
+*Figure 7 — We plot TPR and FPR of M3 versus regeneration strength on the 94 test-half sources (95 % Wilson
+intervals).*
 
 ![Score distributions](outputs_p3/figures/fig7_score_dist_none.png)
 
