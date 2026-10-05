@@ -118,7 +118,7 @@ outputs_p3/figures/         paper figures (PDF + PNG)
 | E4 calibration size | `10_eval_e4_calibration_size.py` | `metrics/e4_calibration_size.csv` |
 | E5 failure conditions | `11_eval_failure_conditions.py` | `metrics/e5_failure_conditions.csv` |
 | E7 MS-COCO real images | `score_coco_real.py`, `08c_eval_coco_real_fpr.py` | `metrics/e7_coco_real_fpr.csv` |
-| E8 img2img regeneration | `score_adaptive_regen.py`, `08d_eval_adaptive_regen.py` (all 200 sources), `28_e8_test_sources.py` (the 94 sources outside the seed-0 calibration half, reported in the paper; Figure 7) | `metrics/e8_adaptive_regen.csv`, `metrics/e8_adaptive_regen_test_sources.*` |
+| E8 img2img regeneration | `score_adaptive_regen.py`, `08d_eval_adaptive_regen.py` (all 200 sources), `28_e8_test_sources.py` (the 94 sources outside the seed-0 calibration half, reported in the paper; Figure 6) | `metrics/e8_adaptive_regen.csv`, `metrics/e8_adaptive_regen_test_sources.*` |
 | E9 DWT-DCT-SVD | `score_dwtdctsvd.py`, `08e_eval_dwtdctsvd_comparator.py` | `outputs_p3_appd/` |
 | E10 Tree-Ring | `gen_treering_cuda.py`, `score_treering_cuda.py`, `22_treering_pilot_check.py` (ROBIN reproduction check), `23_treering_fpr.py` | `treering/metrics/` |
 | Bootstrap CIs | `12_compute_ci.py` | `metrics/ci_bootstrap.csv` |
@@ -218,10 +218,6 @@ for seeds 0–4).
 | 0.05 | 0.008 (0.004–0.016) | 0.042 |
 | 0.10 | 0.029 (0.020–0.041) | 0.071 |
 
-![COCO FPR](outputs_p3/figures/fig5_coco_real_fpr_alpha0.png)
-
-*Figure 6 — We show the empirical FPR of M3 on MS-COCO at α = 0.05 with its Wilson interval.*
-
 ### E8 — img2img regeneration stress test (94 sources outside the seed-0 calibration half, seed 0)
 
 The regeneration run produced and scored 200 sources (Section 4). Of these, 106 lie in the calibration half of
@@ -239,12 +235,12 @@ kept in `metrics/e8_adaptive_regen.csv` for reference.
 
 ![Regeneration](outputs_p3/figures/fig6_adaptive_regen_alpha0.png)
 
-*Figure 7 — We plot TPR and FPR of M3 versus regeneration strength on the 94 test-half sources (95 % Wilson
+*Figure 6 — We plot TPR and FPR of M3 versus regeneration strength on the 94 test-half sources (95 % Wilson
 intervals).*
 
 ![Score distributions](outputs_p3/figures/fig7_score_dist_none.png)
 
-*Figure 8 — We show the score distributions under `none`, pooled over five seeds.*
+*Figure 7 — We show the score distributions under `none`, pooled over five seeds.*
 
 ### E9 — DWT-DCT-SVD comparator (seed 0, own calibration pool)
 
